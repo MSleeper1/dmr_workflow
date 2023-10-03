@@ -1,0 +1,46 @@
+name: alignment
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=4.5
+  - bwa=0.7.17
+  - bwa-mem2=2.2.1
+  - bwameth=0.2.5
+  - bzip2=1.0.8
+  - c-ares=1.18.1
+  - ca-certificates=2022.12.7
+  - curl=7.88.1
+  - keyutils=1.6.1
+  - krb5=1.20.1
+  - ld_impl_linux-64=2.40
+  - libcurl=7.88.1
+  - libedit=3.1.20191231
+  - libev=4.33
+  - libffi=3.4.2
+  - libgcc-ng=12.2.0
+  - libgomp=12.2.0
+  - libnghttp2=1.52.0
+  - libnsl=2.0.0
+  - libsqlite=3.40.0
+  - libssh2=1.10.0
+  - libstdcxx-ng=12.2.0
+  - libuuid=2.32.1
+  - libzlib=1.2.13
+  - ncurses=6.3
+  - openssl=3.1.0
+  - perl=5.32.1
+  - pip=23.0.1
+  - python=3.11.0
+  - readline=8.1.2
+  - samtools=1.6
+  - setuptools=67.6.0
+  - tk=8.6.12
+  - toolshed=0.4.6
+  - tzdata=2022g
+  - wheel=0.38.4
+  - xz=5.2.6
+  - zlib=1.2.13
+
