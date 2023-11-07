@@ -9,7 +9,7 @@
 #SBATCH -e slurm.fastp.j%j.err                  # STANDARD ERROR FILE TO WRITE TO
 #SBATCH -o slurm.fastp.j%j.out                  # STANDARD OUTPUT FILE TO WRITE TO
 #SBATCH --mail-user=msleeper@ucdavis.edu        # YOUR EMAIL ADDRESS
-#SBATCH --mail-type=ALL                         # NOTIFICATIONS OF SLURM JOB STATUS 
+#SBATCH --mail-type=ALL                         # NOTIFICATIONS OF SLURM JOB STATUS
 
 #-----------------------------------------------------------------------------------#
 # description and usage
