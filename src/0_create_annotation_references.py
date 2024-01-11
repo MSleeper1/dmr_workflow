@@ -2,6 +2,8 @@
     # Script name: 0_create_annotation_references_simplified.ipynb
     # Purpose: Create annotation references for DMR analysis
     # Author: Meghan M. Sleeper
+    # Updated from ipynb to py and refactored 12/2023
+    # Next steps: add arguments for file paths and names and add CGI annotations
 
 # Inputs: 
     # gene annotations
@@ -10,7 +12,7 @@
     # regulatory build annotations 
         # supplementary/GRCh38.p14_regulatory_features_mart_export.tsv 
 
-    # CGI annotations (have not added CGI annotations  to script yet)
+    # CGI annotations (have not added CGI annotations to script yet)
         # supplementary/UCSC.CGI.GRCh38.bed 
     
 # Outputs: 
@@ -72,19 +74,25 @@ outname_reg = 'ensembl.GRch38.p14.regulatory.tsv' # regulatory build only
 ### output directory path
 outdir = '../supplementary/annotation_beds/'
 
-### output file names with path
-fullname_all = os.path.join(outdir, outname_all) # all features
-fullname_genes = os.path.join(outdir, outname_genes) # genes only
-fullname_reg = os.path.join(outdir, outname_reg) # regulatory build only
-
 
 # %%
-#w unzip gencode_annotation_file if it is a .gz file
-if gencode_annotation_file.endswith(".gz"):
-    with gzip.open(gencode_annotation_file, 'rb') as f_in:
-        with open(gencode_annotation_file[:-3], 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-            gencode_annotation_file = gencode_annotation_file[:-3]
+# function to unzip gz file if it is a .gz file and return the unzipped file name
+def unzip_gz_file(gz_file):
+    # unzip gz file if it is a .gz file
+    if gz_file.endswith(".gz"):
+        if not os.path.exists(gz_file[:-3]):
+            with gzip.open(gz_file, 'rb') as f_in:
+                with open(gz_file[:-3], 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+                    gz_file = gz_file[:-3]
+        else:
+            gz_file = gz_file[:-3]
+    return gz_file
+
+# remove after testing main function
+# unzip gencode_annotation_file if it is a .gz file
+unzipped_gencode_annotation_file = unzip_gz_file(gencode_annotation_file)
+
 
 # %% [markdown]
 # ## Reading in and cleaning regulatory build file
@@ -92,11 +100,27 @@ if gencode_annotation_file.endswith(".gz"):
 # %%
 # regulatory build file to df
 # note: this file only needs to be sorted and indexed, which will happen at the end of this script
-annot_regulatory = pd.read_csv(ensembl_regulatory_build, 
+annot_regulatory = pd.read_table(ensembl_regulatory_build, 
                                   sep='\t', 
-                                  header=0, names=['chr', 'start', 'end', 
-                                                   'feature_type', 'feature_type_description'])
+                                  header=0, 
+                                  names=['chr', 'start', 'end', 
+                                        'feature_type', 'feature_type_description'
+                                        ]
+                                )
 
+# %%
+# Create dataframe from gencode gtf annotation file
+gencode = pd.read_table(unzipped_gencode_annotation_file, 
+                        comment="#", 
+                        sep = "\t", 
+                        names = ['seqname', 'source', 'feature', 
+                                'start' , 'end', 'score', 'strand', 
+                                'frame', 'attribute'
+                                ]
+                        )
+
+# %%
+annot_regulatory.chr.unique()
 
 # %%
 ### filter out chromosomes and contigs that are not in the chromosomes list
@@ -126,30 +150,32 @@ annot_regulatory = pd.read_csv(ensembl_regulatory_build,
         #       dtype=object)
 
 # list of chromosome numbers to include in final annotation file (excludes contigs and alternative haplotypes)
-chromosomes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 
+chrom_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 
                '10', '11', '12', '13', '14', '15', '16', '17', 
                '18', '19', '20', '21', '22', 'X', 'Y']
 
 # if annot_regulatory['chr'] is not in chromosomes list, remove the row
-annot_regulatory = annot_regulatory[annot_regulatory['chr'].isin(chromosomes)]
+annot_regulatory = annot_regulatory[annot_regulatory['chr'].isin(chrom_list)]
 
 # add "chr" string to the value to match the format of wgbstools output
 annot_regulatory['chr'] = 'chr' + annot_regulatory['chr']
+
+# def clean_chr(chrom_list, df_in):
+#     df_out = df_in[df_in['chr'].isin(chrom_list)]
+#     df_out['chr'] = 'chr' + df_out['chr']
+#     return df_out
+
+# remove after testing main function
+# keep only chromosomes in chrom_list and add "chr" string to the chromosome name to match wgbstools output
+#annot_regulatory = clean_chr(chrom_list, annot_regulatory) 
+
+# %% 
+annot_regulatory.chr.unique()
 
 
 # %% [markdown]
 # ## Preparing gencode gtf file for use in annotation script
 
-# %%
-# Create dataframe from gencode gtf annotation file
-gencode = pd.read_table(gencode_annotation_file, 
-                        comment="#", 
-                        sep = "\t", 
-                        names = ['seqname', 'source', 'feature', 
-                                'start' , 'end', 'score', 'strand', 
-                                'frame', 'attribute'
-                                ]
-                        )
 
 # %%
 # creating dataframes for grouped features that share the same attribute information to make parsing attributes easier
@@ -160,25 +186,40 @@ gencode = pd.read_table(gencode_annotation_file,
         #    'five_prime_UTR', 'three_prime_UTR',
         #    'stop_codon_redefined_as_selenocysteine'
 
-gencode_genes = gencode[(gencode.feature == "gene")][
-    ['seqname', 'start', 'end', 'attribute','feature', 
-     'strand', 'source']].copy().reset_index().drop('index', axis=1)
+# gencode_genes = gencode[(gencode.feature == "gene")][
+#     ['seqname', 'start', 'end', 'attribute','feature', 
+#      'strand', 'source']].copy().reset_index().drop('index', axis=1)
 
-gencode_exons_codons_utrs_cds = gencode[
-    (gencode.feature == "exon") | 
-    (gencode.feature == "start_codon") | 
-    (gencode.feature == "stop_codon") | 
-    (gencode.feature == "five_prime_UTR") | 
-    (gencode.feature == "three_prime_UTR") | 
-    (gencode.feature == "CDS")
-    ][['seqname', 'start', 'end', 'attribute', 'feature', 'strand', 'source']
-      ].copy().reset_index().drop('index', axis=1)
+# gencode_exons_codons_utrs_cds = gencode[
+#     (gencode.feature == "exon") | 
+#     (gencode.feature == "start_codon") | 
+#     (gencode.feature == "stop_codon") | 
+#     (gencode.feature == "five_prime_UTR") | 
+#     (gencode.feature == "three_prime_UTR") | 
+#     (gencode.feature == "CDS")
+#     ][['seqname', 'start', 'end', 'attribute', 'feature', 'strand', 'source']
+#       ].copy().reset_index().drop('index', axis=1)
 
-gencode_transcripts_selenocyteines = gencode[
-    (gencode.feature == "transcript") | 
-    (gencode.feature == "stop_codon_redefined_as_selenocysteine")
-    ][['seqname', 'start', 'end', 'attribute', 'feature', 'strand', 'source']
-      ].copy().reset_index().drop('index', axis=1)
+# gencode_transcripts_selenocyteines = gencode[
+#     (gencode.feature == "transcript") | 
+#     (gencode.feature == "stop_codon_redefined_as_selenocysteine")
+#     ][['seqname', 'start', 'end', 'attribute', 'feature', 'strand', 'source']
+#       ].copy().reset_index().drop('index', axis=1)
+
+gencode_column_list = ['seqname', 'start', 'end', 'attribute','feature', 'strand', 'source']
+
+gene_list = ['gene']
+exon_codon_utrs_cds_list = ['exon', 'start_codon', 'stop_codon', 'five_prime_UTR', 'three_prime_UTR', 'CDS']
+transcript_selenocysteine_list = ['transcript', 'stop_codon_redefined_as_selenocysteine']
+
+def create_gencode_df(gencode, gencode_column_list, feature_list):
+    gencode_df = gencode[(gencode.feature.isin(feature_list))][gencode_column_list].copy().reset_index().drop('index', axis=1)
+    return gencode_df
+
+# remove after testing main function
+gencode_genes = create_gencode_df(gencode, gencode_column_list, gene_list)
+gencode_exons_codons_utrs_cds = create_gencode_df(gencode, gencode_column_list, exon_codon_utrs_cds_list)
+gencode_transcripts_selenocyteines = create_gencode_df(gencode, gencode_column_list, transcript_selenocysteine_list)
 
 
 # %%
@@ -219,6 +260,7 @@ def transcript_info(x):
     return (g_name, g_id, g_type, g_level, transcript_name, transcript_type)
 
 # %%
+# remove after testing main function
 ## Using gene_info function on genes
 # extract gene_name, gene_id, gene_type, and gene_level from gencode_genes.attribute
 gencode_genes["gene_name"], gencode_genes["gene_id"], gencode_genes["gene_type"], gencode_genes["gene_level"] = zip(*gencode_genes.attribute.apply(lambda x: gene_info(x)))
@@ -254,15 +296,24 @@ gencode_transcripts_selenocyteines["gene_name"], gencode_transcripts_selenocytei
 # %%
 
 # concatenating dataframes for all features into one dataframe with NaNs for missing values where features don't have the same attributes
-gencode_all = pd.concat(
-    [gencode_genes, 
-     gencode_exons_codons_utrs_cds, 
-     gencode_transcripts_selenocyteines], 
-     ignore_index=True
-     ).reset_index().drop('index', axis=1)
+# gencode_all = pd.concat(
+#     [gencode_genes, 
+#      gencode_exons_codons_utrs_cds, 
+#      gencode_transcripts_selenocyteines], 
+#      ignore_index=True
+#      ).reset_index().drop('index', axis=1)
 
 # To confirm that all features are included in the new dataframe, uncomment the following line
 # gencode_all.feature.unique()
+
+def gencode_join(df_list):
+    df_out = pd.concat(df_list, ignore_index=True).reset_index().drop('index', axis=1)
+    return df_out
+
+gencode_join_list = [gencode_genes, gencode_exons_codons_utrs_cds, gencode_transcripts_selenocyteines]
+
+# remove after testing main function
+gencode_all = gencode_join(gencode_join_list)
 
 
 # %% [markdown]
@@ -287,61 +338,197 @@ gencode_all = pd.concat(
 ### Save the gencode dataframes into files to be sorted and converted to bed files
 
 # create output directories if they don't exist
-if not os.path.exists(outdir):
-    os.makedirs(outdir)
+# if not os.path.exists(outdir):
+#     os.makedirs(outdir)
+
+
+# def join_outdir_filename(outdir, outname):
+#     # create output directories if they don't exist
+#     if not os.path.exists(outdir):
+#         os.makedirs(outdir)
+#     # join output directory and filename
+#     fullname = os.path.join(outdir, outname)
+
+#     return fullname
+
+# fullname_all = join_outdir_filename(outdir, outname_all) # all features
+# fullname_genes = join_outdir_filename(outdir, outname_genes) # genes only
+# fullname_reg = join_outdir_filename(outdir, outname_reg) # regulatory build only
+
+def save_df_to_file(df, outdir, outname):
+    
+    # create output directories if they don't exist
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+   
+    # join output directory and filename
+    fullname = os.path.join(outdir, outname)
+   
+    # save dataframe to file
+    df.to_csv(fullname, index=False, header = False, sep="\t")
+
+
+save_df_to_file(gencode_all, outdir, outname_all) # all features
+save_df_to_file(gencode_genes, outdir, outname_genes) # genes only
+save_df_to_file(annot_regulatory, outdir, outname_reg) # regulatory build only
+
+# remove after testing main function
+# ### output file names with path
+# fullname_all = os.path.join(outdir, outname_all) # all features
+# fullname_genes = os.path.join(outdir, outname_genes) # genes only
+# fullname_reg = os.path.join(outdir, outname_reg) # regulatory build only
 
 #### Save the gencode dataframes into files to be sorted and converted to bed files
-gencode_all.to_csv(fullname_all, index=False, header = False, sep="\t")
-gencode_genes.to_csv(fullname_genes, index=False, header = False, sep="\t")
-annot_regulatory.to_csv(fullname_reg, index=False, header = False, sep="\t")
+# gencode_all.to_csv(fullname_all, index=False, header = False, sep="\t")
+# gencode_genes.to_csv(fullname_genes, index=False, header = False, sep="\t")
+# annot_regulatory.to_csv(fullname_reg, index=False, header = False, sep="\t")
 
 # %% [markdown]
 
 # ## Sorting, compressing, and indexing annotation reference files
 
-# %% 
-%%bash -s ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.tsv
-# Sort by chromosome, start, and end
-cut -f 1,2,3,4,5 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed
-
-# Compress the bed file
-bgzip -f ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed
-
-# Index the bed file
-tabix -f -p bed ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed.gz
-
 # %%
-%%bash -s ../supplementary/annotation_beds/gencode.v44.annotation.all.tsv
-# Sort by chromosome, start, and end
-cut -f 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed
 
-# Compress the bed file
-bgzip -f ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed
+import subprocess
 
-# Index the bed file
-tabix -f -p bed ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed.gz
+def process_annotation_tsv(input_file, col_string):
+    # Sort by chromosome, start, and end
+    sort_command = f"cut -f {col_string} {input_file} | sort -k1,1 -k2,2n -k3,3n > {input_file}.sorted.formatted.bed"
+    subprocess.run(sort_command, shell=True, check=True)
 
-# %%
-%%bash -s ../supplementary/annotation_beds/gencode.v44.annotation.genes.tsv
-# Sort by chromosome, start, and end
-cut -f 1,2,3,4,5,6,7,8,9,10,11 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed
+    # Compress the bed file
+    compress_command = f"bgzip -f {input_file}.sorted.formatted.bed"
+    subprocess.run(compress_command, shell=True, check=True)
 
-# Compress the bed file
-bgzip -f ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed
+    # Index the bed file
+    index_command = f"tabix -f -p bed {input_file}.sorted.formatted.bed.gz"
+    subprocess.run(index_command, shell=True, check=True)
 
-# Index the bed file
-tabix -f -p bed ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed.gz
+# Example usage
+all_file_path = "../supplementary/annotation_beds/gencode.v44.annotation.all.tsv"
+reg_col_cut_string = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"
+process_annotation_tsv(all_file_path, reg_col_cut_string)
+
+gene_file_path = "../supplementary/annotation_beds/gencode.v44.annotation.genes.tsv"
+gene_col_cut_string = "1,2,3,4,5,6,7,8,9,10,11"
+process_annotation_tsv(gene_file_path, gene_col_cut_string)
+
+reg_file_path = "../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.tsv"
+reg_col_cut_string = "1,2,3,4,5"
+process_annotation_tsv(reg_file_path, reg_col_cut_string)
+
+# # %% 
+# %%bash -s ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.tsv
+# # Sort by chromosome, start, and end
+# cut -f 1,2,3,4,5 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed
+
+# # Compress the bed file
+# bgzip -f ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed
+
+# # Index the bed file
+# tabix -f -p bed ../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.sorted.formatted.bed.gz
+
+# # %%
+# %%bash -s ../supplementary/annotation_beds/gencode.v44.annotation.all.tsv
+# # Sort by chromosome, start, and end
+# cut -f 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed
+
+# # Compress the bed file
+# bgzip -f ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed
+
+# # Index the bed file
+# tabix -f -p bed ../supplementary/annotation_beds/gencode.v44.annotation.all.sorted.formatted.bed.gz
+
+# # %%
+# %%bash -s ../supplementary/annotation_beds/gencode.v44.annotation.genes.tsv
+# # Sort by chromosome, start, and end
+# cut -f 1,2,3,4,5,6,7,8,9,10,11 $1 | sort -k1,1 -k2,2n -k3,3n > ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed
+
+# # Compress the bed file
+# bgzip -f ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed
+
+# # Index the bed file
+# tabix -f -p bed ../supplementary/annotation_beds/gencode.v44.annotation.genes.sorted.formatted.bed.gz
+
+
 
 # %%
 ### remove large intermediate files to save space
 
 # remove unzipped gencode annotation file to save space
-if not gencode_annotation_file.endswith(".gz"):
-    os.remove(gencode_annotation_file)
+if not unzipped_gencode_annotation_file.endswith(".gz"):
+    os.remove(unzipped_gencode_annotation_file)
 
 # tsv with all features is 1.1 gb and should be removed to save space
 # remove large outname_all file to save space if it was created
-if os.path.exists(fullname_all):
-    os.remove(fullname_all)
+if os.path.exists(outdir + outname_all):
+    os.remove(outdir + outname_all)
 
 # %%
+
+# %%
+# main function to run script
+if __name__ == '__main__':
+
+    # unzip gencode_annotation_file if it is a .gz file
+    unzipped_gencode_annotation_file = unzip_gz_file(gencode_annotation_file)
+
+    # Create dataframe from gencode gtf annotation file
+    gencode = pd.read_table(unzipped_gencode_annotation_file, 
+                            comment="#", 
+                            sep = "\t", 
+                            names = ['seqname', 'source', 'feature', 
+                                    'start' , 'end', 'score', 'strand', 
+                                    'frame', 'attribute'
+                                    ]
+                            )
+
+    # regulatory build file to df
+    # note: this file only needs to be sorted and indexed, which will happen at the end of this script
+    annot_regulatory = pd.read_table(ensembl_regulatory_build, 
+                                    sep='\t', 
+                                    header=0, 
+                                    names=['chr', 'start', 'end', 
+                                            'feature_type', 'feature_type_description'
+                                            ]
+                                    )
+    
+    # keep only chromosomes in chrom_list and add "chr" string to the chromosome name to match wgbstools output
+    annot_regulatory = clean_chr(chrom_list, annot_regulatory) 
+
+    # creating dataframes for grouped features that share the same attribute information to make parsing attributes easier
+    gencode_genes = create_gencode_df(gencode, gencode_column_list, gene_list)
+    gencode_exons_codons_utrs_cds = create_gencode_df(gencode, gencode_column_list, exon_codon_utrs_cds_list)
+    gencode_transcripts_selenocyteines = create_gencode_df(gencode, gencode_column_list, transcript_selenocysteine_list)
+
+    ## Using gene_info function on genes
+    # extract gene_name, gene_id, gene_type, and gene_level from gencode_genes.attribute
+    gencode_genes["gene_name"], gencode_genes["gene_id"], gencode_genes["gene_type"], gencode_genes["gene_level"] = zip(*gencode_genes.attribute.apply(lambda x: gene_info(x)))
+
+    ## Using all_info function on exons, start codons, stop codons, utrs, and cds
+    # extract gene_name, gene_type, gene_level, exon_id, exon_number, transcript_name, and transcript_type from gencode_exons_codons_utrs_cds.attribute
+    gencode_exons_codons_utrs_cds["gene_name"], gencode_exons_codons_utrs_cds["gene_id"], gencode_exons_codons_utrs_cds["gene_type"], gencode_exons_codons_utrs_cds["gene_level"], gencode_exons_codons_utrs_cds["exon_id"], gencode_exons_codons_utrs_cds["exon_number"], gencode_exons_codons_utrs_cds["transcript_name"], gencode_exons_codons_utrs_cds["transcript_type"] = zip(*gencode_exons_codons_utrs_cds.attribute.apply(lambda x: all_info(x)))
+
+    ## Using transcript_info function on transcripts and stop_codon_redefined_as_selenocysteine
+    # extract gene_name, gene_type, gene_level, exon_id, exon_number, transcript_name, and transcript_type from gencode_transcripts_selenocyteines.attribute using transcript_info function
+    gencode_transcripts_selenocyteines["gene_name"], gencode_transcripts_selenocyteines["gene_id"], gencode_transcripts_selenocyteines["gene_type"], gencode_transcripts_selenocyteines["gene_level"], gencode_transcripts_selenocyteines["transcript_name"], gencode_transcripts_selenocyteines["transcript_type"] = zip(*gencode_transcripts_selenocyteines.attribute.apply(lambda x: transcript_info(x)))
+
+    # concatenating dataframes for all features into one dataframe with NaNs for missing values where features don't have the same attributes
+    gencode_all = gencode_join(gencode_join_list)
+
+    # save dataframes to tsv files
+    save_df_to_file(gencode_all, outdir, outname_all) # all features
+    save_df_to_file(gencode_genes, outdir, outname_genes) # genes only
+    save_df_to_file(annot_regulatory, outdir, outname_reg) # regulatory build only
+
+    all_file_path = "../supplementary/annotation_beds/gencode.v44.annotation.all.tsv"
+    reg_col_cut_string = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"
+    process_annotation_tsv(all_file_path, reg_col_cut_string)
+
+    gene_file_path = "../supplementary/annotation_beds/gencode.v44.annotation.genes.tsv"
+    gene_col_cut_string = "1,2,3,4,5,6,7,8,9,10,11"
+    process_annotation_tsv(gene_file_path, gene_col_cut_string)
+
+    reg_file_path = "../supplementary/annotation_beds/ensembl.GRch38.p14.regulatory.tsv"
+    reg_col_cut_string = "1,2,3,4,5"
+    process_annotation_tsv(reg_file_path, reg_col_cut_string)
