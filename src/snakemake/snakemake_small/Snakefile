@@ -9,11 +9,10 @@ import os
 # os.system("cd /home/msleeper/programs/wgbs_tools")
 # os.system("export PATH=${PATH}:$PWD") 
 
-# # configure hg19 as reference genome (add -f to overwrite existing reference)
-# #shell("wgbstools init_genome hg19")
-os.system("wgbstools init_genome hg19")
-
-region="chr3:119527929-119531943"
+# # configure hg38 as reference genome (add -f to overwrite existing reference)
+# only need to run init_genome once
+# os.system("wgbstools init_genome hg38")
+os.system("wgbstools set_default_ref hg38")
 
 rule all:
     input:
