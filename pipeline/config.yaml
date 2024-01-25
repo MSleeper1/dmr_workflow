@@ -1,7 +1,13 @@
-workingdir: "/home/msleeper/scratch/crc_dmr"
+workingdir: "/home/msleeper/scratch/crc_dmr" # path to working directory
 
 ref:
-  genome: "hg38"
-  fasta: "hg38.analysisSet"
-  goldenPath: "//hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.fa.gz"
-  dir: "/home/msleeper/scratch/crc_dmr/genomes/hg38"
+  genome: "hg38" # genome build
+  dir: "/home/msleeper/scratch/genomes/hg38/analysisSet" # path to genome directory
+  fasta: "hg38.analysisSet" # prefix for genome fasta file name 
+  goldenPath: "//hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.fa.gz" # UCSC genome browser path to reference genome fasta file
+  bismark_idx_dir: "/home/msleeper/scratch/genomes/hg38/analysisSet/Bisulfite_Genome" # Bismark output directory
+  bwa_idx_dir: "/home/msleeper/scratch/genomes/hg38/analysisSet" # bwameth output to same directory as input (this should match ref.dir)
+
+args:
+  rsync: "-avzP --progress --ignore-existing" # rsync arguments
+  bismark: "-q --bowtie2 --multicore 4 --bam --temp_dir /home/msleeper/scratch/tmp" # bismark arguments

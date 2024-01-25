@@ -1,0 +1,11 @@
+
+configfile: "/home/msleeper/workflows/dmr_workflow/pipeline/config.yaml"
+
+rule all:
+     input: expand("{outdir}/{fasta}.fa.gz", outdir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
+
+##### include rules #####
+include:"rules/0_rsync_get_ref_genome.smk"
+include:"rules/0_bwameth_idx_ref.smk"
+include:"rules/0_bismark_idx_ref.smk"
+#include:"rules/0_wgbstools_idx_ref.smk"
