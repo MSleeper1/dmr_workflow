@@ -14,8 +14,11 @@ rule index_bismark_bwt2_ref_genome:
     conda:
         "../env/bismark.yaml",
 
+    params:
+        bismk = config["prep_args"]["bismark_genome_prep"]
+
     shell:
-        "bismark_genome_preparation --verbose --bowtie2 {input.ref_dir} > {log.stdout} 2> {log.stderr}"
+        "bismark_genome_preparation {params.bismk} {input.ref_dir} > {log.stdout} 2> {log.stderr}"
 
     
 
