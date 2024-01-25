@@ -1,7 +1,7 @@
-workingdir: "/home/msleeper/scratch/crc_dmr/"
+workingdir: "/home/msleeper/scratch/crc_dmr"
 
 ref:
   genome: "hg38"
-  fasta: "hg38.analysisSet.fa.gz"
+  fasta: "hg38.analysisSet"
   goldenPath: "//hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.fa.gz"
-  outputdir: "/home/msleeper/scratch/crc_dmr/genomes/hg38/"
+  dir: "/home/msleeper/scratch/crc_dmr/genomes/hg38"
