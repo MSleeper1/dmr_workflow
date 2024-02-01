@@ -1,0 +1,49 @@
+# cluster.yaml - cluster configuration
+# This file is used by snakemake to submit jobs to the cluster
+
+# submit jobs to the cluster using the following command:
+# snakemake -s prep-Snakefile --cluster-config ../cluster.yaml --cluster "sbatch --parsable --time={cluster.time} --mem={cluster.mem_mb} --nodes={cluster.nodes} --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} --error={cluster.error}" --jobs 5 --use-cond
+
+# cluster configuration
+__default__:
+    partition: med2
+    time: 0-01:00:00 # time limit for each job
+    mem_mb: 1000 # memory limit for each job (in MB)
+    nodes: 1 # number of nodes
+    cpus-per-task: 4 # number of cpus per task
+    ntasks-per-node: 14 # request n cores be allocated per node.
+    output: logs/{rule}/{rule}-{wildcards}-%j.out 
+    error: logs/{rule}/{rule}-{wildcards}-%j.err
+
+
+restart-times: 3                                                # number of times to restart a failed job     
+max-jobs-per-second: 10                                         # max number of jobs to submit per second    
+max-status-checks-per-second: 1                                 # max number of status checks per second  
+local-cores: 1                                                  # number of cores to use on local machine   
+latency-wait: 100                                               # number of seconds to wait for cluster to respond
+jobs: 50                                                        # number of jobs to run simultaneously  
+keep-going: True                                                # continue running jobs if a job fails      
+rerun-incomplete: True                                          # rerun jobs if they are incomplete     
+printshellcmds: True                                            # print shell commands in job scripts     
+scheduler: greedy                                               # scheduler to use (greedy or sequential)
+use-conda: True                                                 # use conda to manage software dependencies
+    
+bwameth_index_ref_genome:                                   ### rule specific settings ###
+    time: 05:00:00                                            # time limit for each job (D-HH:MM)
+    mem_mb: 15000                                                # memory limit for each job (in MB)       
+
+bismark_index_ref_genome:                                   
+    time: 05:00:00
+    mem_mb: 15000
+
+wgbstools_init_ref_genome:
+    time: 0:30:00
+    mem_mb: 5000      
+
+sra_get_data_se:
+    time: 0:30:00
+    mem_mb: 5000             
+
+
+
+                                                               

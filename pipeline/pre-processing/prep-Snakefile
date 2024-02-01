@@ -1,16 +1,78 @@
 
-configfile: "../config.yaml"
+# snakemake -s prep-Snakefile --cluster-config ../cluster.yaml --cluster "sbatch --parsable --time={cluster.time} --mem={cluster.mem_mb} --nodes={cluster.nodes} --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} --error={cluster.error}" --jobs 11 --use-conda --rerun-incomplete --printshellcmds --dry-run
+
+import pandas as pd
+configfile: "/home/msleeper/workflows/dmr_workflow/pipeline/config.yaml"
+
+# samples = pd.read_table(config["samples_tsv"], dtype=str).set_index(["accession"], drop=False)
+# sra_accessions = samples["accession"].tolist()
+
+sample_info = pd.read_table(config["samples_tsv"], dtype=str).set_index(["accession"], drop=False)
+# accessions = sample_info['accession'].tolist()
+# se_info = sample_info[sample_info['end_type'] == 'single_end']
+# accessions_se = se_info['accession'].tolist()
+ 
+index_single = sample_info['end_type'] == 'single_end'
+sample_info_se = sample_info[index_single]
+ 
+se_samples = sample_info_se['accession']
+accessions_se = se_samples.tolist()
+
+# accessions_se = sample_info[sample_info['end_type'] == 'single_end']['accession'].tolist()
+# accessions_pe = sample_info[sample_info['end_type'] == 'paired_end']['accession'].tolist()
+
 
 rule all:
-     input: 
-          expand("{ref_dir}/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"]), #rsync_get_ref_genome output
-          expand("{ref_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t","c2t.bwt","c2t.pac","c2t.ann","c2t.amb","c2t.sa"], ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"]), # bwameth_idx_ref output
-          directory(expand("{ref_dir}/Bisulfite_Genome", ref_dir=config["ref"]["dir"])), # bismark_idx_ref output
-          directory(expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome = config["ref"]["wgbstools_ref_name"])), # wgbstools_idx_ref output
+     input:
+          expand("{ref_dir}/{fasta}.fa.gz", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),  # rsync_get_ref_genome output
+          expand("{bwa_idx_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t", "c2t.bwt", "c2t.pac", "c2t.ann", "c2t.amb", "c2t.sa"], bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"]),
+          expand("{bismark_idx_dir}", bismark_idx_dir=config["ref"]["bismark_idx_dir"]),  # bismark_idx_ref output
+          expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"]),  # wgbstools_idx_ref output)
+          expand("{data_dir}/raw_sequence_files/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}/{sample.accession}.fastq", data_dir=config["data"]["dir"], sample=sample_info_se.itertuples())
+          
+          # expand("{data_dir}/raw_sequence_files/single_end/{accession}.fastq", data_dir = config["data"]["dir"], accession=accessions_se)
 
+          # expand("{data_dir}/raw_sequence_files/{ref}/{group}--{srx_id}/{accession}.fastq", data_dir = config["data"]["dir"])
+          # expand("/home/msleeper/scratch/data/raw_sequence_files/single_end/{accession}.fastq", accession=accessions_se)
+          # expand("{data_dir}/raw_sequence_files/{accession}.fastq.gz", data_dir=config["data"]["dir"], accession=sample_info["accession"])
+          # expand("{data_dir}/raw_sequence_files/{ref}/{group}-{srx_id}/{accession}.fastq.gz", data_dir = config["data"]["dir"], ref = sample_info["ref"], accession = sample_info["accession"], group = sample_info["group"], srx_id = sample_info["srx_id"])
+          # expand("{data_dir}/raw_sequence_files/{ref}/{accession}.fastq.gz", data_dir = config["data"]["dir"], ref = sample_info["ref"], accession = sample_info["accession"])
+          # expand("{data_dir}/raw_sequence_files/{accession}.fastq.gz", data_dir=config["data"]["dir"], accession=["sra_accessions"])  # sra_get_data output
+          # expand("{data_dir}/raw/{sample.ref}/{sample.group}-{sample.srx_id}/{sample.accession}.fastq.gz", data_dir=config["data"]["dir"], sample=sample_info.itertuples())
 
 ##### include rules #####
-include:"../rules/0_rsync_get_ref_genome.smk"
-include:"../rules/0_bwameth_idx_ref.smk"
-include:"../rules/0_bismark_idx_ref.smk"
-include:"../rules/0_wgbstools_idx_ref.smk"
+include: "../rules/0_rsync_get_ref_genome.smk"
+include: "../rules/0_bwameth_index_ref_genome.smk"
+include: "../rules/0_bismark_index_ref_genome.smk"
+include: "../rules/0_wgbstools_init_ref_genome.smk"
+include: "../rules/0_sra_get_data.smk"
+# include: "../rules/0_sra_get_data_simplified.smk"
+# include: "../rules/sra_diff_approach.smk"
+
+
+# # Include the following lines to run the rule for all accessions
+# rule all:
+#     input:
+#         expand("{data_dir}/raw/{{sample.ref}}/{{sample.group}}-{{sample.srx_id}}/{{sample.accession}}.fastq.gz", data_dir=config["data"]["dir"], sample=samples.itertuples())
+#         rule sra_get_data:
+#         output:
+#             expand("{data_dir}/raw/{{samples.ref}}/{{samples.group}}-{{samples.srx_id}}/{{samples.accession}}.fastq.gz", data_dir=config["data"]["dir"])
+    
+    
+#         log:
+#             stdout = expand("../logs/sra_get_data/sra_get_data-{{samples.ref}}-{{samples.accession}}.out"),
+#             stderr = expand("../logs/sra_get_data/sra_get_data-{{samples.ref}}-{{samples.accession}}.err")
+    
+#         conda:
+#             "../env/sra-download.yaml"
+    
+#         params:
+#             temp_dir=expand("{data_dir}/temp/{{samples.ref}}/{{samples.group}}-{{samples.srx_id}}/{{samples.accession}}", data_dir=config["data"]["dir"]),
+#             output_dir = expand("{data_dir}/raw/{{samples.ref}}/{{samples.group}}-{{samples.srx_id}}", data_dir=config["data"]["dir"])
+    
+#         shell:
+#             """
+#             mkdir -p {params.output_dir}
+#             prefetch -O {params.output_dir} {samples.accession}
+#             fasterq-dump --temp {params.temp_dir} -O {params.output_dir} {samples.accession} > {log.stdout} 2> {log.stderr}
+#             """
