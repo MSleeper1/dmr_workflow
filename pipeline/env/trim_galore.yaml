@@ -1,6 +1,6 @@
-name: bismark
+name: trim_galore
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bismark=0.24.2
+  - trim-galore=0.6.10

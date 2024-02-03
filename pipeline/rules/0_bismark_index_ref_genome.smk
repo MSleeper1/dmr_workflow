@@ -22,8 +22,8 @@ rule bismark_index_ref_genome:
 
     shell:
         """
-        mkdir -p {params.bismk_dir} > {log.stdout} 2> {log.stderr}
-        cp {input.fasta_path} {params.bismk_fasta_path} > {log.stdout} 2> {log.stderr}
+        mkdir -p {params.bismk_dir} 
+        cp {input.fasta_path} {params.bismk_fasta_path} 
         bismark_genome_preparation {params.bismk_args} {params.bismk_dir} > {log.stdout} 2> {log.stderr}
         """
 

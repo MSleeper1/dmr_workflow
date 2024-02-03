@@ -41,9 +41,12 @@ wgbstools_init_ref_genome:
     mem_mb: 5000      
 
 sra_get_data_se:
-    time: 0:30:00
-    mem_mb: 5000             
+    time: 03:00:00
+    mem_mb: 15000             
 
+trim_galore_se:
+    time: 01:00:00
+    mem_mb: 10000
 
 
                                                                

@@ -3,4 +3,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bwameth
+  - bwameth=0.2.5
+  - samtools=1.6
