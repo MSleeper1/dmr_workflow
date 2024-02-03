@@ -1,6 +1,6 @@
-name: bismark
+name: fastqc
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bismark=0.24.2
+  - fastqc=0.11.9

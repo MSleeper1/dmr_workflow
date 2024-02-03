@@ -1,6 +1,6 @@
-name: bismark
+name: sambamba
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bismark=0.24.2
+  - sambamba=1.0

@@ -98,7 +98,7 @@ for i; do
     # converting sam to bam
     echo "converting $i.sam to $i.bam"
     samtools view -S -b $outfolder/$i.sam > $outfolder/$i.bam
-    /usr/bin/time -o ~/benchmarking/2_single-end-alignment/samtools_convert.txt --append -f "%C,%E,%P,%K,%x" samtools view -S -b $outfolder/$i.sam > $outfolder/$i.bam
+    # /usr/bin/time -o ~/benchmarking/2_single-end-alignment/samtools_convert.txt --append -f "%C,%E,%P,%K,%x" samtools view -S -b $outfolder/$i.sam > $outfolder/$i.bam
 
 
     # add completed accession number to FILES array
