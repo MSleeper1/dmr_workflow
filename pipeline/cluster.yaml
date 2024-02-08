@@ -2,18 +2,23 @@
 # This file is used by snakemake to submit jobs to the cluster
 
 # submit jobs to the cluster using the following command:
-# snakemake -s prep-Snakefile --cluster-config ../cluster.yaml --cluster "sbatch --parsable --time={cluster.time} --mem={cluster.mem_mb} --nodes={cluster.nodes} --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} --error={cluster.error}" --jobs 5 --use-cond
+#       snakemake -s prep-Snakefile --cluster-config ../cluster.yaml 
+#       --cluster "sbatch --parsable --time={cluster.time} 
+#       --mem={cluster.mem_mb} --nodes={cluster.nodes} 
+#       --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} 
+#       --error={cluster.error} --job-name={cluster.name}" --jobs 5 --use-conda
 
 # cluster configuration
 __default__:
-    partition: med2
-    time: 0-01:00:00 # time limit for each job
-    mem_mb: 1000 # memory limit for each job (in MB)
-    nodes: 1 # number of nodes
-    cpus-per-task: 4 # number of cpus per task
-    ntasks-per-node: 14 # request n cores be allocated per node.
-    output: logs/{rule}/{rule}-{wildcards}-%j.out 
-    error: logs/{rule}/{rule}-{wildcards}-%j.err
+    partition: med2                                             # partition to submit jobs to (-p, --partition=PARTITION)
+    time: 0-01:00:00                                            # time limit for each job in D-HH:MM:SS (-t, --time=TIME)
+    mem_mb: 1000                                                # memory limit for each job in MB (--mem=MB)
+    nodes: 1                                                    # number of nodes (-N 1, --nodes=1)
+    cpus-per-task: 4                                            # think of this as threads: number of cpus per task (-c 4, --cpus-per-task=4)
+    ntasks-per-node: 14                                         # request n cores be allocated per node. (-n 14, --ntasks-per-node=14)
+    output: logs/sbatch-logs/{rule}/{rule}-{wildcards}-%j.out   # file for standard out (-o, --output=FILE)
+    error: logs/sbatch-logs/{rule}/{rule}-{wildcards}-%j.err    # file for standard error (-e, --error=FILE)
+    name: smk-{rule}.{wildcards}                                # name for job (-J, --job-name=NAME)
 
 
 restart-times: 3                                                # number of times to restart a failed job     
@@ -38,15 +43,41 @@ bismark_index_ref_genome:
 
 wgbstools_init_ref_genome:
     time: 0:30:00
-    mem_mb: 5000      
+    mem_mb: 5000   
 
 sra_get_data_se:
     time: 03:00:00
-    mem_mb: 15000             
+    mem_mb: 15000        
 
 trim_galore_se:
-    time: 01:00:00
-    mem_mb: 10000
+    time: 03:00:00
+    mem_mb: 15000
 
+bismark_mapping_se:
+    time: 0-20:00:00
+    mem_mb: 20000
 
+bwameth_mapping_se:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpus-per-task: 4
+
+# bwameth_mapping_se_pipe:
+#     time: 0-20:00:00
+#     mem_mb: 20000
+#     cpus-per-task: 8
+
+# bwameth_mapping_pe_pipe:
+#     time: 0-20:00:00
+#     mem_mb: 20000
+#     cpus-per-task: 8
+
+bismark_mapping_pe:
+    time: 0-20:00:00
+    mem_mb: 20000
+
+sambamba_sort_index_markdups:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpus-per-task: 8
                                                                

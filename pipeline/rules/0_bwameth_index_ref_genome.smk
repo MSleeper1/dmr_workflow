@@ -5,10 +5,11 @@ rule bwameth_index_ref_genome:
         fasta_path = expand("{ref_dir}/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
     
     output:
-        expand("{bwa_idx_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t","c2t.bwt","c2t.pac","c2t.ann","c2t.amb","c2t.sa"], bwa_idx_dir = config["ref"]["bwa_idx_dir"], fasta = config["ref"]["fasta"])
+        expand("{bwa_idx_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t","c2t.bwt","c2t.pac","c2t.ann","c2t.amb","c2t.sa"], bwa_idx_dir = config["ref"]["bwa_idx_dir"], fasta = config["ref"]["fasta"]),
+        expand("{bwa_idx_dir}/{fasta}.fa.gz", bwa_idx_dir = config["ref"]["bwa_idx_dir"], fasta = config["ref"]["fasta"])
 
     log:
-        expand("../logs/bwameth_index_ref_genome/bwameth_index_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
+        expand("../pre-processing/logs/rule-logs/bwameth_index_ref_genome/bwameth_index_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
 
     conda:
         "../env/bwameth.yaml"
