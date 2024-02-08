@@ -8,8 +8,8 @@ rule bismark_index_ref_genome:
         directory(expand("{bismark_idx_dir}", bismark_idx_dir=config["ref"]["bismark_idx_dir"]))
     
     log:
-        stdout = expand("../logs/bismark_index_ref_genome/bismark_index_ref_genome--{fasta}.out", fasta = config["ref"]["fasta"]),
-        stderr = expand("../logs/bismark_index_ref_genome/bismark_index_ref_genome--{fasta}.err", fasta = config["ref"]["fasta"])
+        stdout = expand("../pre-processing/logs/rule-logs/bismark_index_ref_genome/bismark_index_ref_genome--{fasta}.out", fasta = config["ref"]["fasta"]),
+        stderr = expand("../pre-processing/logs/rule-logs/bismark_index_ref_genome/bismark_index_ref_genome--{fasta}.err", fasta = config["ref"]["fasta"])
     
     conda:
         "../env/bismark.yaml"
@@ -17,8 +17,7 @@ rule bismark_index_ref_genome:
     params:
         bismk_args = config["prep_args"]["bismark_genome_prep"],
         bismk_dir = expand("{ref_dir}/bismark", ref_dir = config["ref"]["dir"]),
-        bismk_fasta_path = expand("{ref_dir}/bismark/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"]),
-
+        bismk_fasta_path = expand("{ref_dir}/bismark/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
 
     shell:
         """

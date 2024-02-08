@@ -8,7 +8,7 @@ rule wgbstools_init_ref_genome:
         directory(expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"]))
     
     log:
-        expand("../logs/wgbstools_init_ref_genome/wgbstools_init_ref_genome--{fasta}.log", fasta=config["ref"]["fasta"])
+        expand("../pre-processing/logs/rule-logs/wgbstools_init_ref_genome/wgbstools_init_ref_genome--{fasta}.log", fasta=config["ref"]["fasta"])
 
     conda:
         "../env/wgbstools.yaml"
