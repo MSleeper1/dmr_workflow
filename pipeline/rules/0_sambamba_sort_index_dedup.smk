@@ -1,4 +1,7 @@
-
+# flagstat outputs
+        # in_bam_report = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam.flagstat", rep_dir=config["reports_dir"]),
+        # out_bam_report = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.flagstat", rep_dir=config["reports_dir"])
+        # rep_dir = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["data"]["dir"])
 
 rule sambamba_sort_index_markdups:
     input: 
@@ -6,28 +9,30 @@ rule sambamba_sort_index_markdups:
 
     output:
         bam = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"]),
-        bai = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"]),
-        in_bam_report = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam.flagstat", rep_dir=config["reports_dir"]),
-        out_bam_report = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.flagstat", rep_dir=config["reports_dir"])
+        bai = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"])
 
     log:
-        stdout = "../pre-processing/logs/rule-logs/sambamba_sort_index_markdups/{ref}/sambamba_sort_index_markdups-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.out",
-        stderr = "../pre-processing/logs/rule-logs/sambamba_sort_index_markdups/{ref}/sambamba_sort_index_markdups-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
+        "../pre-processing/logs/rule-logs/sambamba_sort_index_markdups/{ref}/sambamba_sort_index_markdups-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
         "../env/sambamba.yaml"
 
     params:
-        temp_dir = expand("{data_dir}/tmp/{{ref}}/{{accession}}", data_dir=config["data"]["dir"]),
-        rep_dir = expand("{rep_dir}/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["data"]["dir"])
+        temp_dir = expand("{data_dir}/temp/sambamba/{{ref}}/{{accession}}", data_dir=config["data"]["dir"]),
+        sorted_bam = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted.bam", data_dir=config["data"]["dir"]),
 
-    threads: 6
+    threads: 3
 
     shell:
         """
-        sambamba flagstat -t {threads} {input.bam} > {output.in_bam_report}
-        sambamba sort -p -t {threads} -o {output.bam} --tmpdir {params.temp_dir} {input.bam} >2 {log.stderr} | \
-        sambamba markdup -p -t {threads} --overflow-list-size 610000000 --tmpdir {params.temp_dir} {output.bam} >> {log.stdout} 2>> {log.stderr}
-        sambamba index -p -t {threads} {output.bam} {output.bai} >> {log.stdout} 2>> {log.stderr}
-        sambamba flagstat -t {threads} {output.bam} > {output.out_bam_report}
+        mkdir -p {params.temp_dir}
+        echo "Sorting bam file..." > {log}
+        sambamba sort -t {threads} -o {params.sorted_bam} --tmpdir {params.temp_dir} {input.bam} >> {log} 2>> {log}
+        echo "Sorting complete. Now marking duplicates..." >> {log} 
+        sambamba markdup -t {threads} --remove-duplicates --tmpdir {params.temp_dir} {params.sorted_bam} {output.bam} >> {log} 2>> {log}
+        echo "Marking duplicates complete. Now indexing..." >> {log}
+        sambamba index -t {threads} {output.bam} {output.bai} >> {log} 2>> {log}
+        echo "Indexing complete. Now removing intermediate bam file.." >> {log}
+        rm -f {params.sorted_bam} >> {log} 2>> {log}
+        echo "Intermediate bam file removed. Done." >> {log}
         """

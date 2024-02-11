@@ -5,14 +5,23 @@
 
 #### import modules ####
 import pandas as pd
+import subworkflow_functions as swf
 
 #### assign config ####
 configfile: "/home/msleeper/workflows/dmr_workflow/pipeline/config.yaml"
 
 #### sample info ####
-sample_info = pd.read_table(config["samples_tsv"], dtype=str).set_index(["accession"], drop=False)
+sample_info = swf.get_sample_info_df(config["samples_tsv"])
 sample_info_se = sample_info[sample_info['layout'] == 'se']
 sample_info_pe = sample_info[sample_info['layout'] == 'pe']
+
+# #### make a dictionary with srx_id key : accession list value pairs ####
+# srx_acc_dict = swf.make_srx_acc_dict(sample_info)
+
+# #### make dictionary with srx_id key : df rows value pairs for merging info ####
+# srx_acc_df_dict = swf.make_srx_df_dict(sample_info)
+# srx_merged_dict = swf.merge_rows_by_srx_id(srx_acc_df_dict)
+# sample_info_by_srx = swf.make_sample_info_by_srx(sample_info)
 
 #### default rule ####
 rule all:
@@ -50,15 +59,22 @@ rule all:
           ### bismark_mapping output ###
           expand("{data_dir}/trimmed/trim_galore/aligned/bismark_bwt2/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # bismark_mapping se output
           expand("{rep_dir}/bismark_bwt2/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2_SE_report.txt", rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), 
-          
-          ### samtools sam to bam conversion output ###
-          # expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}{suf}", data_dir=config["data"]["dir"], se=sample_info_se.itertuples(), suf=["_trimmed.bam"]), # bwameth_mapping se output
-          # expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/{pe.ref}/{pe.patient_id}/{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}{suf}", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples(), suf=["_trimmed.bam"]), # bwameth_mapping pe output
 
           ### sambamba_sort_index_dedup output ###
-          # expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.{suf}", data_dir=config["data"]["dir"], sample=sample_info.itertuples(), suf=["bam", "bam.bai"]), # sambamba_dedup output
+          expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.{suf}", data_dir=config["data"]["dir"], sample=sample_info.itertuples(), suf=["bam", "bam.bai"]), # sambamba_dedup output
+
+          ### sambamba flagstat output ###
+
+          ### sambamba merge output ###
+          expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/merged/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", data_dir=config["data"]["dir"], sample=sample_info.itertuples()) # sambamba_merge output
+
+          ### reports ###
+
+          ### removed reporting in sambamba sort index dedup rule - flagstat will be done separately###
           # expand("{rep_dir}/sambamba/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}{suf}", rep_dir=config["reports_dir"], sample=sample_info.itertuples(), suf=["_trimmed.bam.flagstat", "_trimmed_sorted_dedup.bam.flagstat"]) # sambamba flagstat output
-   
+
+          # ### sambamba merge outputs ###
+          # expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/merged/{srx.ref}/{srx.patient_id}/{srx.group}-{srx.srx_id}-{srx.layout}/{srx.group}-{srx.srx_id}_trimmed_bwameth_deduped_merged.bam", data_dir=config["data"]["dir"], srx=sample_info_by_srx.itertuples()) # sambamba_merge output
 
 
           ### old input format (no longer needed after testing) ###
@@ -98,6 +114,7 @@ include: "../rules/0_trim_galore.smk"
 include: "../rules/0_bwameth_mapping.smk"
 include: "../rules/0_bismark_mapping.smk"
 include: "../rules/0_sambamba_sort_index_dedup.smk"
-include: "../rules/0_reports.smk"
+include: "../rules/0_sambamba_merge.smk"
+# include: "../rules/0_reports.smk"
 
 
