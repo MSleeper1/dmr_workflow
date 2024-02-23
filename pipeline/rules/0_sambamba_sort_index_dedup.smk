@@ -9,10 +9,11 @@ rule sambamba_sort_index_markdups:
 
     output:
         bam = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"]),
-        bai = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"])
+        bai = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{{ref}}/{{patient_id}}/{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"]),
+        log = expand("{rep_dir}/sambamba_sort_index_markdups/{{ref}}/sambamba_sort_index_markdups-{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     log:
-        "../pre-processing/logs/rule-logs/sambamba_sort_index_markdups/{ref}/sambamba_sort_index_markdups-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        expand("{rep_dir}/sambamba_sort_index_markdups/{{ref}}/sambamba_sort_index_markdups-{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     conda:
         "../env/sambamba.yaml"

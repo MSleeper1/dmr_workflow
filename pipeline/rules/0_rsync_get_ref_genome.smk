@@ -22,3 +22,24 @@ rule rsync_get_ref_genome:
         rsync {params.rsync_args} rsync:{params.gold_path} {params.out_dir} > {log} 2>&1
         gunzip -c {output.zipped_fasta} > {output.unzipped_fasta} 
         """
+
+rule rsync_get_ref_gtf:
+    output:
+        gtf = expand("{ref_dir}/{gtf}", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"])
+    
+    log:
+        expand("../pre-processing/logs/rule-logs/rsync_get_ref_gtf/rsync_get_ref_gtf--{gtf}.log", gtf = config["ref"]["gtf"])
+
+    conda:
+        "../env/rsync.yaml"
+    
+    params:
+        gold_path = config["ref"]["gtf_goldenPath"], 
+        out_dir = config["ref"]["dir"],
+        rsync_args = config["prep_args"]["rsync_get_ref"]
+
+    shell:
+        """
+        mkdir -p {params.out_dir}
+        rsync {params.rsync_args} rsync:{params.gold_path} {params.out_dir} > {log} 2>&1
+        """

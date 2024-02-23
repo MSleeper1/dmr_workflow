@@ -32,7 +32,10 @@ rule all:
           # expand("{bwa_idx_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t", "c2t.bwt", "c2t.pac", "c2t.ann", "c2t.amb", "c2t.sa"], bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"]), # bwameth_index_ref output
           # expand("{bismark_idx_dir}", bismark_idx_dir=config["ref"]["bismark_idx_dir"]),  # bismark_index_ref output
           expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"]),  # wgbstools_init_ref output
-          
+          expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/", genomes_dir=config["genomes_dir"]),
+          expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", genomes_dir=config["genomes_dir"]),
+          expand("{ref_dir}/{gtf}", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"]), # gtf file for ref genome
+
           ### sra_get_data raw sequence files ###
           expand("{data_dir}/raw_sequence_files/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}.fastq", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # sra_get_data se output
           expand("{data_dir}/raw_sequence_files/{pe.ref}/{pe.patient_id}/{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}{suf}", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples(), suf={"_1.fastq", "_2.fastq"}), # sra_get_data pe R1 and R2 output
@@ -40,7 +43,10 @@ rule all:
           ### fastqc pre-trim output reports ###
           expand("{rep_dir}/fastqc/pre-trim/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}_fastqc.{suf}", rep_dir=config["reports_dir"], se=sample_info_se.itertuples(), suf=["html","zip"]), # fastqc se output
           expand("{rep_dir}/fastqc/pre-trim/{pe.ref}/{pe.patient_id}/{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}_fastqc.{suf}", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples(), read=["1", "2"], suf=["html", "zip"]), # fastqc pe R1 and R2 output
-          
+
+          ### fastq_screen output ###
+          expand("{rep_dir}/fastq_screen/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_screen.{suf}", sample=sample_info.itertuples(), suf=["txt"], rep_dir=config["reports_dir"]), # fastq_screen output (other outputs: "png", "html", "bisulfite_orientation.png")
+     
           ### trim_galore output ###
           expand("{data_dir}/trimmed/trim_galore/{se.ref}/{se.patient_id}/{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.fq", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # trim_galore se output
           expand("{data_dir}/trimmed/trim_galore/{pe.ref}/{pe.patient_id}/{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}_trimmed.fq", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples(), read=["1", "2"]), # trim_galore pe output
@@ -63,10 +69,27 @@ rule all:
           ### sambamba_sort_index_dedup output ###
           expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.{suf}", data_dir=config["data"]["dir"], sample=sample_info.itertuples(), suf=["bam", "bam.bai"]), # sambamba_dedup output
 
-          ### sambamba flagstat output ###
+          ### fastqc post-de-dup QC on bam output reports ###
+          expand("{rep_dir}/fastqc/post-dedup/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"], sample=sample_info.itertuples()), # fastqc se output post-dedup
+
+          ### samtools stats output ###
+          expand("{rep_dir}/samtools/{sample.ref}/{sample.patient_id}/{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_dedup.stats", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # samtools_stats output
 
           ### sambamba merge output ###
-          expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/merged/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", data_dir=config["data"]["dir"], sample=sample_info.itertuples()) # sambamba_merge output
+          expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/merged/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", data_dir=config["data"]["dir"], sample=sample_info.itertuples()), # sambamba_merge output
+
+          ### fastqc post-merge output reports ###
+          expand("{rep_dir}/fastqc/post-merge/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"], sample=sample_info.itertuples()), # fastqc post-merge output
+
+          ### featureCounts output ###
+          expand("{rep_dir}/feature_counts/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.featureCounts{suf}", rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"], sample=sample_info.itertuples()), # featureCounts output
+
+          ### wgbstools output ###
+          expand("{data_dir}/wgbstools/betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data"]["dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), # wgbstools output
+
+          ### qualimap output report directories ###
+          expand("{rep_dir}/qualimap/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # qualimap output
+
 
           ### reports ###
 
@@ -108,6 +131,7 @@ include: "../rules/0_rsync_get_ref_genome.smk"
 include: "../rules/0_bwameth_index_ref_genome.smk"
 include: "../rules/0_bismark_index_ref_genome.smk"
 include: "../rules/0_wgbstools_init_ref_genome.smk"
+include: "../rules/0_fastq_screen_genome_prep.smk"
 include: "../rules/0_sra_get_data.smk"
 include: "../rules/0_fastqc_pretrim.smk"
 include: "../rules/0_trim_galore.smk"
@@ -115,6 +139,13 @@ include: "../rules/0_bwameth_mapping.smk"
 include: "../rules/0_bismark_mapping.smk"
 include: "../rules/0_sambamba_sort_index_dedup.smk"
 include: "../rules/0_sambamba_merge.smk"
+include: "../rules/0_fastq_screen.smk"
+include: "../rules/0_samtools_stats.smk"
+include: "../rules/0_feature_counts.smk"
+include: "../rules/0_fastqc_post_dedup.smk"
+include: "../rules/0_fastqc_post_merge.smk"
+include: "../rules/0_wgbstools.smk"
+include: "../rules/0_qualimap_post_merge.smk"
 # include: "../rules/0_reports.smk"
 
 
