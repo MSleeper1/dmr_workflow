@@ -1,5 +1,7 @@
-# snakemake rule to index reference genome for bismark bwt2 alignment
+### Genome preparation for bismark ###
 
+# bismak_index_ref_genome: index the reference genome for bismark
+# change ref.dir and ref.fasta in config.yaml to use a different reference genome
 rule bismark_index_ref_genome:
     input:
         fasta_path = expand("{ref_dir}/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
@@ -26,5 +28,4 @@ rule bismark_index_ref_genome:
         bismark_genome_preparation {params.bismk_args} {params.bismk_dir} > {log.stdout} 2> {log.stderr}
         """
 
-    
 

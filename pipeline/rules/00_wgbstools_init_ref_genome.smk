@@ -1,5 +1,7 @@
+### Genome prepatation for wgbstools use ###
 
-
+# wgbstools_init_ref_genome: Initialize reference genome for wgbstools
+# change ref.fasta and ref.wgbstools_ref_name in config.yaml to the name of the desired reference genome fasta file and name for wgbstools to use for the reference genome
 rule wgbstools_init_ref_genome:
     input:
         ref = expand("{ref_dir}/{fasta}.fa.gz", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"])

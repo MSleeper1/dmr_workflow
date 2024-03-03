@@ -1,30 +1,27 @@
 
-rule wgbstools_convert_bam_to_beta:
-    ''' convert bams into pat and beta files'''
+rule segment_betas:
     input:
-        bams = expand("{data_dir}/trimmed/trim_galore/aligned/bwameth/deduped/sambamba/merged/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"]), # sambamba_merge output
-        ref = expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"])  # wgbstools_init_ref output
-         
+        betas = pre_processing_workflow(expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data"]["dir"], suf=["beta"], sample=sample_info.itertuples()))
+
     output:
-        expand("{data_dir}/wgbstools/betas/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.{suf}", data_dir=config["data"]["dir"], suf=["pat.gz", "pat.gz.csi", "beta"])
+        blocks = expand("{data_dir}/06_wgbstools/blocks.bed", data_dir=config["data"]["dir"]),
+        index = expand("{data_dir}/06_wgbstools/blocks.bed.{suf}", data_dir=config["data"]["dir"], suf=["gz", "gz.tbi"]),
+        table = expand("{data_dir}/06_wgbstools/segments.tsv", data_dir=config["data"]["dir"])
 
     log:
-        "../pre-processing/logs/rule-logs/wgbstools_convert_bam_to_beta/{ref}/wgbstools_convert_bam_to_beta-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+        "../pre-processing/logs/rule-logs/wgbstools_segment/wgbstools_segment.log"
 
     conda:
         "../env/wgbstools.yaml"
 
-    params:
-        outdir = expand("{data_dir}/wgbstools/betas", data_dir=config["data"]["dir"]),
-        tempdir = expand("{data_dir}/wgbstools/temp", data_dir=config["data"]["dir"]),
-        ref_name = config["ref"]["wgbstools_ref_name"]
-
     shell: 
         """
-        mkdir -p {params.outdir}
-        mkdir -p {params.tempdir}
-        wgbstools bam2pat -f --out_dir {params.outdir} --mbias --genome {params.ref_name} --temp_dir {params.tempdir} {input.bams} > {log} 2>&1
-        """
+        wgbstools segment --betas {input.betas} --min_cpg 3 --max_bp 2000 -o {output.blocks}
+        wgbstools index {output.blocks}
+        wgbstools beta_to_table {output.blocks} --betas {input.betas} | column -t >> {output.table}
+        """   
+
+
 
 
 
