@@ -1,5 +1,7 @@
+### Genome preparation for bwameth ###
 
-
+# bwameth_index_ref_genome: index the reference genome for bwameth
+# change ref.dir and ref.fasta in config.yaml to use a different reference genome
 rule bwameth_index_ref_genome:
     input:
         fasta_path = expand("{ref_dir}/{fasta}.fa.gz", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"])

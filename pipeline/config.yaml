@@ -15,8 +15,8 @@ ref:
   bwa_idx_dir: "/home/msleeper/scratch/genomes/hg38/analysisSet/bwameth" # bwameth output to same directory as input (this should match ref.dir)
   wgbstools_idx_dir: "/home/msleeper/programs/wgbs_tools/references" # wgbs_tools ref index output directory
   wgbstools_ref_name: "hg38_analysisSet" # wgbs_tools ref index name
-  gtf: "hg38.knownGene.gtf.gz"
-  gtf_goldenPath: "//hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz"
+  gtf: "hg38.knownGene" # prefix for gtf file name
+  gtf_goldenPath: "//hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" # UCSC genome browser path to gtf file (should end in gtf.gz)
   annotation_file: /home/msleeper/workflows/dmr_workflow/supplementary/gencode.v44.chr_patch_hapl_scaff.basic.annotation.gff3.gz
 
 data:

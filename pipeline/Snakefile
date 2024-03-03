@@ -1,16 +1,29 @@
 
 
+#### import modules ####
+import pandas as pd
+import workflow_functions as wf
+
+#### assign config ####
 configfile: "config.yaml"
 
-subworkflow prep:
-     workdir: "/home/msleeper/workflows/dmr_workflow/pipeline/pre-processing" # path to pre-processing pipeline
-     snakefile: "/home/msleeper/workflows/dmr_workflow/pipeline/pre-processing/prep-Snakefile" # path to pre-processing snakefile
+#### sample info ####
+sample_info = wf.get_sample_info_df(config["samples_tsv"])
 
-# rule all:
-#      input: expand("{outdir}/{fasta}.fa.gz", outdir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
+subworkflow pre_processing_workflow:
+     workdir:
+          "/home/msleeper/workflows/dmr_workflow/pipeline/pre-processing" # path to pre-processing pipeline
+     snakefile:
+          "pre-processing/prep-Snakefile.smk" # path to pre-processing snakefile
+
+rule all:
+    input:
+        pre_processing_workflow(expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data"]["dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples())),
+        expand("{data_dir}/06_wgbstools/blocks.bed", data_dir=config["data"]["dir"]),
+        expand("{data_dir}/06_wgbstools/blocks.bed.{suf}", data_dir=config["data"]["dir"], suf=["gz", "gz.tbi"]),
+        expand("{data_dir}/06_wgbstools/segments.tsv", data_dir=config["data"]["dir"])
 
 # ##### include rules #####
-# include:"rules/0_rsync_get_ref_genome.smk"
-# include:"rules/0_bwameth_idx_ref.smk"
-# include:"rules/0_bismark_idx_ref.smk"
+include:"rules/06_wgbstools_segmentation.smk"
+
 
