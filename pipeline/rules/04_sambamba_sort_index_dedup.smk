@@ -14,12 +14,12 @@ rule sambamba_sort_index_markdups:
         bam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])
 
     output:
-        bam = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"])),
         bai = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"]),
         report = expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     log:
-        expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
+        expand("{rep_dir}/04_sambamba_sort_index_markdups/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     conda:
         "../env/sambamba.yaml"

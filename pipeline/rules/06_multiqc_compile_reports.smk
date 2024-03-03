@@ -23,7 +23,7 @@ rule multiqc_compile_reports:
         expand("{rep_dir}/prep_multiqc_data/multiqc.html", rep_dir=config["reports_dir"]),
         directory(expand("{rep_dir}/prep_multiqc_data", rep_dir=config["reports_dir"]))
     log:
-        "../pre-processing/logs/rule-logs/prep_multiqc.log"
+        "../pre-processing/logs/rule-logs/06_prep_multiqc.log"
     conda:
         "../env/wgbstools.yaml"
     params:

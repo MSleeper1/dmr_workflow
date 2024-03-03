@@ -10,10 +10,10 @@ rule bismark_mapping_se:
         read_se = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"])
    
     output:
-        bam = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"])),
         report = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2_SE_report.txt", rep_dir=config["reports_dir"])
     log:
-        "../pre-processing/logs/rule-logs/bismark_mapping_se/{ref}/bismark_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/03_bismark_mapping_se/{ref}/03_bismark_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
         "../env/bismark.yaml"
@@ -49,11 +49,11 @@ rule bismark_mapping_pe:
         r2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data"]["dir"])
    
     output:
-        bam = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"])),
         report = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2_PE_report.txt", rep_dir=config["reports_dir"])
     
     log:
-        "../pre-processing/logs/rule-logs/bismark_mapping_pe/{ref}/bismark_mapping_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/03_bismark_mapping_pe/{ref}/03_bismark_mapping_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
         "../env/bismark.yaml"

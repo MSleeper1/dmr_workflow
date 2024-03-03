@@ -7,13 +7,13 @@
 # output: fastqc report (html, zip)
 
 # Rule to run fastqc on single-end sequence files
-rule fatsqc_se:
+rule fastqc_se:
     input:
         expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir = config["data"]["dir"])
     output:
         expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
     log:
-        "../pre-processing/logs/rule-logs/fastqc_se/{ref}/fastqc_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/01_fastqc_se/{ref}/01_fastqc_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
     conda:
         "../env/fastqc.yaml"
     params:
@@ -35,7 +35,7 @@ rule fastqc_pe:
 		r1 = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"]),
 		r2 = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
 	log:
-        "../pre-processing/logs/rule-logs/fastqc_pe/{ref}/fastqc_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/01_fastqc_pe/{ref}/01_fastqc_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 	conda:
 		"../env/fastqc.yaml"
 	params:
@@ -61,7 +61,7 @@ rule fastq_screen_se:
     output:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
     log:
-        "../pre-processing/logs/rule-logs/fastq_screen/{ref}/fastq_screen-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
+        "../pre-processing/logs/rule-logs/01_fastq_screen_se/{ref}/01_fastq_screen_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
         "../env/fastq-screen.yaml"
     params:
@@ -85,7 +85,7 @@ rule fastq_screen_pe:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"]),
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
     log:
-        "../pre-processing/logs/rule-logs/fastq_screen/{ref}/fastq_screen-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
+        "../pre-processing/logs/rule-logs/01_fastq_screen_pe/{ref}/01_fastq_screen_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
         "../env/fastq-screen.yaml"
     threads: 6

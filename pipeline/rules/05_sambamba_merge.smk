@@ -18,10 +18,10 @@ rule sambamba_merge:
        bams = lambda wildcards: expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{accession}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"], accession = sample_info[sample_info["srx_id"] == wildcards.srx_id]["accession"].tolist())
     
     output:
-        merged_bam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"])
+        merged_bam = temporary(expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"]))
 
     log:
-        "../pre-processing/logs/rule-logs/sambamba_merge/{ref}/sambamba_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+        "../pre-processing/logs/rule-logs/05_sambamba_merge/{ref}/05_sambamba_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     conda:
         "../env/sambamba.yaml"

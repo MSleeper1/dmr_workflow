@@ -15,7 +15,7 @@ rule fastqc_post_dedup:
 		expand("{rep_dir}/04_fastqc_post_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
 
 	log:
-		"../pre-processing/logs/rule-logs/fastqc_post_dedup/{ref}/fastqc_post_dedup-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+		"../pre-processing/logs/rule-logs/04_fastqc_post_dedup/{ref}/04_fastqc_post_dedup-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
 	conda:
 		"../env/fastqc.yaml"

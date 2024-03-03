@@ -10,13 +10,13 @@ rule trim_galore_se:
         expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data"]["dir"])
 
     output:
-        trimmed_fq = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"]),
+        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"])),
         fastqc_reports = expand("{rep_dir}/02_fastqc_post_trim/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], suf=["html", "zip"]),
         trim_reports = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq_trimming_report.txt", rep_dir=config["reports_dir"])
         
     log:
-        stdout = "../pre-processing/logs/rule-logs/trim_galore_se/{ref}/trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.out",
-        stderr = "../pre-processing/logs/rule-logs/trim_galore_se/{ref}/trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
+        stdout = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.out",
+        stderr = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
 
     conda:
         "../env/trim_galore.yaml"
@@ -52,12 +52,12 @@ rule trim_galore_pe:
         r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir=config["data"]["dir"])
 
     output:
-        trimmed_fq = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed.fq", data_dir=config["data"]["dir"], read=["1", "2"]),
+        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed.fq", data_dir=config["data"]["dir"], read=["1", "2"])),
         fastqc_reports = expand("{rep_dir}/02_post_trim_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], read=["1", "2"], suf=["html", "zip"]),
         trim_reports = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}.fastq_trimming_report.txt", rep_dir=config["reports_dir"], read=["1", "2"])
 
     log:
-        "../pre-processing/logs/rule-logs/trim_galore_se/{ref}/trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
         "../env/trim_galore.yaml"

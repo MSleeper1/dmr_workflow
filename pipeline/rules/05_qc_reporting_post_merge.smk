@@ -20,7 +20,7 @@ rule qualimap_post_merge:
         directory(expand("{rep_dir}/05_qualimap/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged", rep_dir=config["reports_dir"]))
         
     log:
-        "../pre-processing/logs/rule-logs/qualimap_post_merge/{ref}/qualimap_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+        "../pre-processing/logs/rule-logs/05_qualimap_post_merge/{ref}/05_qualimap_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     conda:
         "../env/qualimap.yaml"
@@ -51,7 +51,7 @@ rule feature_counts:
         expand("{rep_dir}/05_feature_counts/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.featureCounts{suf}", rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"])
 
     log:
-        "../pre-processing/logs/rule-logs/feature_counts/{ref}/feature_counts-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+        "../pre-processing/logs/rule-logs/05_feature_counts/{ref}/05_feature_counts-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     threads:
         3
@@ -82,7 +82,7 @@ rule fastqc_post_merge:
 		expand("{rep_dir}/05_fastqc_post_merge/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
 
 	log:
-		"../pre-processing/logs/rule-logs/fastqc_post_merge/{ref}/fastqc_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+		"../pre-processing/logs/rule-logs/05_fastqc_post_merge/{ref}/05_fastqc_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
 	conda:
 		"../env/fastqc.yaml"

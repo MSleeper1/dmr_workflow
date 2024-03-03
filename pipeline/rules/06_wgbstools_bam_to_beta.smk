@@ -1,3 +1,4 @@
+# note: --mbias is only compatible with pe samples. If I run into issues with mbias plotting error messages I may need to split se and pe samples at this step
 
 rule wgbstools_convert_bam_to_beta:
     ''' convert bams into pat and beta files'''

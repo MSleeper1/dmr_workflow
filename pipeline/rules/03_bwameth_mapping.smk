@@ -12,11 +12,11 @@ rule bwameth_mapping_se:
         index = expand("{bwa_idx_dir}/{fasta}.fa.gz", bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"])
             
     output:
-        bam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])),
         bwa_report = expand("{rep_dir}/03_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"])
          
     log: 
-        "../pre-processing/logs/rule-logs/bwameth_mapping_se/{ref}/bwameth_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        "../pre-processing/logs/rule-logs/03_bwameth_mapping_se/{ref}/03_bwameth_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
         
     conda: 
         "../env/bwameth.yaml"
@@ -46,11 +46,11 @@ rule bwameth_mapping_pe_pipe:
         index = expand("{bwa_idx_dir}/{fasta}.fa.gz", bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"])
 
     output:
-        bam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])),
         bwa_report = expand("{rep_dir}/03_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"])
          
     log:
-        "../pre-processing/logs/rule-logs/bwameth_mapping_pe_pipe/{ref}/bwameth_mapping_se_pipe-{ref}-{patient_id}-{group}-{layout}-{srx_id}-{accession}.log"
+        "../pre-processing/logs/rule-logs/03_bwameth_mapping_pe_pipe/{ref}/03_bwameth_mapping_se_pipe-{ref}-{patient_id}-{group}-{layout}-{srx_id}-{accession}.log"
 
     conda:
         "../env/bwameth.yaml"
