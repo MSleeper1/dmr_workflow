@@ -13,7 +13,7 @@
 
 rule qualimap_post_merge:
     input:
-        expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"]),
+        expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]),
         gtf = expand("{ref_dir}/{gtf}.gtf", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"])
 
     output:
@@ -23,7 +23,7 @@ rule qualimap_post_merge:
         "../pre-processing/logs/rule-logs/05_qualimap_post_merge/{ref}/05_qualimap_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     conda:
-        "../env/qualimap.yaml"
+        "../environment_files/qualimap.yaml"
 
     params:
         temp_out = "{ref}-{patient_id}-{group}-{srx_id}-{layout}_merged"
@@ -41,7 +41,7 @@ rule qualimap_post_merge:
 
 rule feature_counts:
     input:
-        sam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"]),
+        sam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]),
         annotation = expand("{ref_dir}/{gtf}.gtf", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"])
         # optional input
         # chr_names="",           # implicitly sets the -A flag
@@ -57,7 +57,7 @@ rule feature_counts:
         3
 
     conda:
-        "../env/feature_counts.yaml"
+        "../environment_files/feature_counts.yaml"
 
     params:
         tmp_dir="",   # implicitly sets the --tmpDir flag
@@ -76,7 +76,7 @@ rule feature_counts:
 
 rule fastqc_post_merge:
 	input: 
-		expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"])
+		expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"])
 
 	output:
 		expand("{rep_dir}/05_fastqc_post_merge/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
@@ -85,7 +85,7 @@ rule fastqc_post_merge:
 		"../pre-processing/logs/rule-logs/05_fastqc_post_merge/{ref}/05_fastqc_post_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
 	conda:
-		"../env/fastqc.yaml"
+		"../environment_files/fastqc.yaml"
 
 	params:
 		output_dir = expand("{rep_dir}/05_fastqc_post_merge", rep_dir = config["reports_dir"])
@@ -103,13 +103,13 @@ rule fastqc_post_merge:
 
 rule samtools_stats_post_merge:
     input:
-        bam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data"]["dir"])
+        bam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"])
 
     output:
         report = expand("{rep_dir}/05_samtools_post_merge/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.stats", rep_dir=config["reports_dir"])
 
     conda:
-        "../env/samtools.yaml"
+        "../environment_files/samtools.yaml"
 
     shell:
         """

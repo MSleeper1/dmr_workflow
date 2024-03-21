@@ -34,7 +34,7 @@ sample_info_pe = sample_info[sample_info['layout'] == 'pe']
 #### default rule ####
 rule all:
      input:
-          expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data"]["dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), # wgbstools output
+          expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), # wgbstools output
           expand("{rep_dir}/prep_multiqc_data/multiqc.html", rep_dir=config["reports_dir"]),
           expand("{rep_dir}/prep_multiqc_data", rep_dir=config["reports_dir"])
 
@@ -69,8 +69,8 @@ include: "../rules/06_multiqc_compile_reports.smk"
           # expand("{ref_dir}/{gtf}.{suf}", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"], suf = ["gtf.gz", "gtf"]), # gtf file for ref genome
           
           # ### 01 sra_get_data raw sequence fastq outputs ###
-          # expand("{data_dir}/01_raw_sequence_files/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}.fastq", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # sra_get_data se output
-          # expand("{data_dir}/01_raw_sequence_files/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}{suf}", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples(), suf={"_1.fastq", "_2.fastq"}), # sra_get_data pe R1 and R2 output
+          # expand("{data_dir}/01_raw_sequence_files/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}.fastq", data_dir=config["data_dir"], se=sample_info_se.itertuples()), # sra_get_data se output
+          # expand("{data_dir}/01_raw_sequence_files/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}{suf}", data_dir=config["data_dir"], pe=sample_info_pe.itertuples(), suf={"_1.fastq", "_2.fastq"}), # sra_get_data pe R1 and R2 output
           
           # ### 01 QC reports ###
           # # 01 fastqc reports
@@ -82,32 +82,32 @@ include: "../rules/06_multiqc_compile_reports.smk"
      
           # ### 02 trim_galore output ###
           # # 02 single end sample output: trimmed fastq, trim and fastq reports
-          # expand("{data_dir}/02_trimmed_trim_galore/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.fq", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # trim_galore se fastq output
+          # expand("{data_dir}/02_trimmed_trim_galore/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.fq", data_dir=config["data_dir"], se=sample_info_se.itertuples()), # trim_galore se fastq output
           # expand("{rep_dir}/02_trim_galore/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}.fastq_trimming_report.txt", rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # moved trim_galore se trimming report
           # expand("{rep_dir}/02_fastqc_post_trim/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], se=sample_info_se.itertuples(), suf=["html","zip"]), # fastqc report post-trim
           # # 02 paired end sample output: trimmed fastq, trim report, and fastq reports for R1 and R2
           # expand("{rep_dir}/02_fastqc_post_trim/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples(), read=["1", "2"], suf=["html","zip"]), # trimmed fastq outputs
-          # expand("{data_dir}/02_trim_galore/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}_trimmed.fq", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples(), read=["1", "2"]), # trim_galore pe reports
+          # expand("{data_dir}/02_trim_galore/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}_trimmed.fq", data_dir=config["data_dir"], pe=sample_info_pe.itertuples(), read=["1", "2"]), # trim_galore pe reports
           # expand("{rep_dir}/02_trim_galore/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_{read}.fastq_trimming_report.txt", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples(), read=["1", "2"]), # fastqc reports post-trim
 
           # ### 03 bwameth_mapping output ###
           # # 03 single end sample output: bam and mapping report
-          # expand("{data_dir}/03_aligned_bwameth/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # bwameth_mapping se output
+          # expand("{data_dir}/03_aligned_bwameth/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", data_dir=config["data_dir"], se=sample_info_se.itertuples()), # bwameth_mapping se output
           # expand("{rep_dir}/03_bwameth/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # bwameth_mapping se report from stderr
           # # 03 paired end sample output: bam and mapping report
-          # expand("{data_dir}/03_aligned_bwameth/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed.bam", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples()), # bwameth_mapping pe output
+          # expand("{data_dir}/03_aligned_bwameth/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed.bam", data_dir=config["data_dir"], pe=sample_info_pe.itertuples()), # bwameth_mapping pe output
           # expand("{rep_dir}/03_bwameth/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # bwameth_mapping pe report from stderr
 
           # ### 03 bismark_mapping output ###
           # # 03 single end sample output: bam and mapping report
-          # expand("{data_dir}/03_aligned_bismark_bwt2/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"], se=sample_info_se.itertuples()), # mapped bam output
+          # expand("{data_dir}/03_aligned_bismark_bwt2/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2.bam", data_dir=config["data_dir"], se=sample_info_se.itertuples()), # mapped bam output
           # expand("{rep_dir}/03_bismark_bwt2/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2_SE_report.txt", rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # bismark_mapping se report
           # # 03 paired end sample output: bam and mapping report
-          # expand("{data_dir}/03_aligned_bismark_bwt2/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"], pe=sample_info_pe.itertuples()), # mapped bam output
+          # expand("{data_dir}/03_aligned_bismark_bwt2/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2.bam", data_dir=config["data_dir"], pe=sample_info_pe.itertuples()), # mapped bam output
           # expand("{rep_dir}/03_bismark_bwt2/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2_PE_report.txt", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # bismark_mapping pe report
 
           # ### 04 sambamba_sort_index_dedup output ###
-          # expand("{data_dir}/04_deduped_sambamba/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.{suf}", data_dir=config["data"]["dir"], sample=sample_info.itertuples(), suf=["bam", "bam.bai"]), # sambamba_dedup output
+          # expand("{data_dir}/04_deduped_sambamba/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.{suf}", data_dir=config["data_dir"], sample=sample_info.itertuples(), suf=["bam", "bam.bai"]), # sambamba_dedup output
 
           # ### 04 QC reports ###
           # # 04 fastqc post-de-dup QC on bam output reports
@@ -116,7 +116,7 @@ include: "../rules/06_multiqc_compile_reports.smk"
           # expand("{rep_dir}/04_samtools_post_dedup/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.bam.stats", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # samtools_stats output
 
           # ### 05 sambamba merge output ###
-          # expand("{data_dir}/05_merged_sambamba/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", data_dir=config["data"]["dir"], sample=sample_info.itertuples()), # sambamba_merge output
+          # expand("{data_dir}/05_merged_sambamba/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", data_dir=config["data_dir"], sample=sample_info.itertuples()), # sambamba_merge output
 
           # ### 05 QC reports ###
           # # 05 fastqc post-merge output reports

@@ -14,7 +14,7 @@ rule bwameth_index_ref_genome:
         expand("../pre-processing/logs/rule-logs/bwameth_index_ref_genome/bwameth_index_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
 
     conda:
-        "../env/bwameth.yaml"
+        "../environment_files/bwameth.yaml"
 
     params:
         bwa_dir = config["ref"]["bwa_idx_dir"],

@@ -7,10 +7,10 @@
 # trim_galore_se: rule to trim single-end fastq files
 rule trim_galore_se:
     input:
-        expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data"]["dir"])
+        expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data_dir"])
 
     output:
-        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"])),
+        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data_dir"])),
         fastqc_reports = expand("{rep_dir}/02_fastqc_post_trim/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], suf=["html", "zip"]),
         trim_reports = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq_trimming_report.txt", rep_dir=config["reports_dir"])
         
@@ -19,10 +19,10 @@ rule trim_galore_se:
         stderr = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
 
     conda:
-        "../env/trim_galore.yaml"
+        "../environment_files/trim_galore.yaml"
 
     params:
-        output_dir=expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data"]["dir"]),  # trimmed files and reports will be saved in this directory
+        output_dir=expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),  # trimmed files and reports will be saved in this directory
         user_args=config["prep_args"]["trim_galore_se"],  # user args can be adjusted in the config file
         fastqc_rep_dir = expand("{rep_dir}/02_post_trim_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"]),  # fastqc reports will be moved to this directory
         trim_rep_dir = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"])  # trim reports will be moved to this directory
@@ -48,11 +48,11 @@ rule trim_galore_se:
 # trim_galore_pe: rule to trim paired-end fastq files
 rule trim_galore_pe:
     input:
-        r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir=config["data"]["dir"]),
-        r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir=config["data"]["dir"])
+        r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir=config["data_dir"]),
+        r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir=config["data_dir"])
 
     output:
-        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed.fq", data_dir=config["data"]["dir"], read=["1", "2"])),
+        trimmed_fq = temporary(expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed.fq", data_dir=config["data_dir"], read=["1", "2"])),
         fastqc_reports = expand("{rep_dir}/02_post_trim_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}_trimmed_fastqc.{suf}", rep_dir=config["reports_dir"], read=["1", "2"], suf=["html", "zip"]),
         trim_reports = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}.fastq_trimming_report.txt", rep_dir=config["reports_dir"], read=["1", "2"])
 
@@ -60,10 +60,10 @@ rule trim_galore_pe:
         "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
-        "../env/trim_galore.yaml"
+        "../environment_files/trim_galore.yaml"
 
     params:
-        output_dir=expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data"]["dir"]),  # trimmed files and reports will be saved in this directory
+        output_dir=expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),  # trimmed files and reports will be saved in this directory
         user_args=config["prep_args"]["trim_galore_se"],  # user args can be adjusted in the config file
         fastqc_rep_dir = expand("{rep_dir}/02_post_trim_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"]),  # fastqc reports will be moved to this directory
         trim_rep_dir = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"])  # trim reports will be moved to this directory

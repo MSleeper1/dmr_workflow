@@ -9,7 +9,7 @@
 # Rule to run fastqc on bam files after deduplication
 rule fastqc_post_dedup:
 	input: 
-		expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir = config["data"]["dir"])
+		expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir = config["data_dir"])
 
 	output:
 		expand("{rep_dir}/04_fastqc_post_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
@@ -18,7 +18,7 @@ rule fastqc_post_dedup:
 		"../pre-processing/logs/rule-logs/04_fastqc_post_dedup/{ref}/04_fastqc_post_dedup-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
 	conda:
-		"../env/fastqc.yaml"
+		"../environment_files/fastqc.yaml"
 
 	params:
 		output_dir = expand("{rep_dir}/04_fastqc_post_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir = config["reports_dir"])
@@ -36,13 +36,13 @@ rule fastqc_post_dedup:
 # output: samtools stats report for deduplicated sequence files (.stats text file)
 rule samtools_stats:
     input:
-        bam = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"]) # sambamba output
+        bam = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data_dir"]) # sambamba output
 
     output:
         report = expand("{rep_dir}/04_samtools_post_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.stats", rep_dir=config["reports_dir"])
 
     conda:
-        "../env/samtools.yaml"
+        "../environment_files/samtools.yaml"
 
     shell:
         """

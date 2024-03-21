@@ -8,24 +8,24 @@
 # bwameth_mapping_se_pipe: align single-end reads to reference genome using bwameth
 rule bwameth_mapping_se:
     input:
-        read_se = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"]),
+        read_se = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data_dir"]),
         index = expand("{bwa_idx_dir}/{fasta}.fa.gz", bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"])
             
     output:
-        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])),
+        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data_dir"])),
         bwa_report = expand("{rep_dir}/03_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"])
          
     log: 
         "../pre-processing/logs/rule-logs/03_bwameth_mapping_se/{ref}/03_bwameth_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
         
     conda: 
-        "../env/bwameth.yaml"
+        "../environment_files/bwameth.yaml"
 
     threads: 3
 
     params: 
         accession = "{accession}",
-        sam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.sam", data_dir=config["data"]["dir"])
+        sam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.sam", data_dir=config["data_dir"])
 
     shell:
         """
@@ -41,25 +41,25 @@ rule bwameth_mapping_se:
 # bwameth_mapping_pe_pipe: align paired-end reads to reference genome using bwameth
 rule bwameth_mapping_pe_pipe:
     input:
-        read_1 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_trimmed.fq", data_dir=config["data"]["dir"]),
-        read_2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data"]["dir"]),
+        read_1 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_trimmed.fq", data_dir=config["data_dir"]),
+        read_2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data_dir"]),
         index = expand("{bwa_idx_dir}/{fasta}.fa.gz", bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"])
 
     output:
-        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])),
+        bam = temporary(expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data_dir"])),
         bwa_report = expand("{rep_dir}/03_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bwameth_report.txt", rep_dir=config["reports_dir"])
          
     log:
         "../pre-processing/logs/rule-logs/03_bwameth_mapping_pe_pipe/{ref}/03_bwameth_mapping_se_pipe-{ref}-{patient_id}-{group}-{layout}-{srx_id}-{accession}.log"
 
     conda:
-        "../env/bwameth.yaml"
+        "../environment_files/bwameth.yaml"
 
     threads: 6
 
     params: 
         accession = "{accession}",
-        sam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.sam", data_dir=config["data"]["dir"])
+        sam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.sam", data_dir=config["data_dir"])
 
     wildcard_constraints:
         layout = "pe"

@@ -11,22 +11,22 @@
 # rule output: sorted/deduplexed bam file, .bai file, and a log file.
 rule sambamba_sort_index_markdups:
     input: 
-        bam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data"]["dir"])
+        bam = expand("{data_dir}/03_aligned_bwameth/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.bam", data_dir=config["data_dir"])
 
     output:
-        bam = temporary(expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data"]["dir"])),
-        bai = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data"]["dir"]),
+        bam = temporary(expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data_dir"])),
+        bai = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data_dir"]),
         report = expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     log:
         expand("{rep_dir}/04_sambamba_sort_index_markdups/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     conda:
-        "../env/sambamba.yaml"
+        "../environment_files/sambamba.yaml"
 
     params:
-        temp_dir = expand("{data_dir}/temp/sambamba/{{ref}}-{{accession}}", data_dir=config["data"]["dir"]),
-        sorted_bam = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted.bam", data_dir=config["data"]["dir"]),
+        temp_dir = expand("{data_dir}/temp/sambamba/{{ref}}-{{accession}}", data_dir=config["data_dir"]),
+        sorted_bam = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted.bam", data_dir=config["data_dir"]),
 
     threads: 3
 

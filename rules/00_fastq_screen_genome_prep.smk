@@ -17,7 +17,7 @@ rule fastq_screen_genome_prep:
         "../pre-processing/logs/rule-logs/fastq_screen/fastq_screen_genome_prep.err"
 
     conda:
-        "../env/fastq-screen.yaml"
+        "../environment_files/fastq-screen.yaml"
 
     params:
         genomes_dir=expand("{genomes_dir}", genomes_dir=config["genomes_dir"])
