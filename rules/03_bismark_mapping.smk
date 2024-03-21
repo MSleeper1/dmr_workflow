@@ -7,21 +7,21 @@
 rule bismark_mapping_se:
     input:
         index = expand("{bismark_idx_dir}/", bismark_idx_dir=config["ref"]["bismark_idx_dir"]),
-        read_se = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data"]["dir"])
+        read_se = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed.fq", data_dir=config["data_dir"])
    
     output:
-        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"])),
+        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data_dir"])),
         report = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2_SE_report.txt", rep_dir=config["reports_dir"])
     log:
         "../pre-processing/logs/rule-logs/03_bismark_mapping_se/{ref}/03_bismark_mapping_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
-        "../env/bismark.yaml"
+        "../environment_files/bismark.yaml"
 
     params:
-        output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data"]["dir"]),
+        output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),
         bismark_idx_dir = expand("{ref_dir}/bismark", ref_dir = config["ref"]["dir"]),
-        temp_dir = expand("{data_dir}/temp/bismark/{{ref}}-{{accession}}", data_dir=config["data"]["dir"]),
+        temp_dir = expand("{data_dir}/temp/bismark/{{ref}}-{{accession}}", data_dir=config["data_dir"]),
         report_dir = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"]),
         accession = "{accession}"
 
@@ -45,23 +45,23 @@ rule bismark_mapping_se:
 rule bismark_mapping_pe:
     input:
         index = expand("{bismark_idx_dir}/", bismark_idx_dir=config["ref"]["bismark_idx_dir"]),
-        r1 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_trimmed.fq", data_dir=config["data"]["dir"]),
-        r2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data"]["dir"])
+        r1 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_trimmed.fq", data_dir=config["data_dir"]),
+        r2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data_dir"])
    
     output:
-        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data"]["dir"])),
+        bam = temporary(expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2.bam", data_dir=config["data_dir"])),
         report = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_bismark_bt2_PE_report.txt", rep_dir=config["reports_dir"])
     
     log:
         "../pre-processing/logs/rule-logs/03_bismark_mapping_pe/{ref}/03_bismark_mapping_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 
     conda:
-        "../env/bismark.yaml"
+        "../environment_files/bismark.yaml"
 
     params:
-        output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data"]["dir"]),
+        output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),
         bismark_idx_dir = expand("{ref_dir}/bismark", ref_dir = config["ref"]["dir"]),
-        temp_dir = expand("{data_dir}/temp/bismark/{{ref}}-{{accession}}", data_dir=config["data"]["dir"]),
+        temp_dir = expand("{data_dir}/temp/bismark/{{ref}}-{{accession}}", data_dir=config["data_dir"]),
         report_dir = expand("{rep_dir}/03_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"]),
         accession = "{accession}"
 

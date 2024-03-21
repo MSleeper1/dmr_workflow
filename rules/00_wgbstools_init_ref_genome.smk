@@ -13,7 +13,7 @@ rule wgbstools_init_ref_genome:
         expand("../pre-processing/logs/rule-logs/wgbstools_init_ref_genome/wgbstools_init_ref_genome--{fasta}.log", fasta=config["ref"]["fasta"])
 
     conda:
-        "../env/wgbstools.yaml"
+        "../environment_files/wgbstools.yaml"
 
     params:
         genome=config["ref"]["wgbstools_ref_name"],

@@ -14,7 +14,7 @@ rule bismark_index_ref_genome:
         stderr = expand("../pre-processing/logs/rule-logs/bismark_index_ref_genome/bismark_index_ref_genome--{fasta}.err", fasta = config["ref"]["fasta"])
     
     conda:
-        "../env/bismark.yaml"
+        "../environment_files/bismark.yaml"
 
     params:
         bismk_args = config["prep_args"]["bismark_genome_prep"],

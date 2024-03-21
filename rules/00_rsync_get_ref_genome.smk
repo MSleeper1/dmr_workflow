@@ -11,7 +11,7 @@ rule rsync_get_ref_genome:
         expand("../pre-processing/logs/rule-logs/rsync_get_ref_genome/rsync_get_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
 
     conda:
-        "../env/rsync.yaml"
+        "../environment_files/rsync.yaml"
     
     params:
         gold_path = config["ref"]["goldenPath"], 
@@ -37,7 +37,7 @@ rule rsync_get_ref_gtf:
         expand("../pre-processing/logs/rule-logs/rsync_get_ref_gtf/rsync_get_ref_gtf--{gtf}.log", gtf = config["ref"]["gtf"])
 
     conda:
-        "../env/rsync.yaml"
+        "../environment_files/rsync.yaml"
     
     params:
         gold_path = config["ref"]["gtf_goldenPath"], 

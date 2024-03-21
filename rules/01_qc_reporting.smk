@@ -9,13 +9,13 @@
 # Rule to run fastqc on single-end sequence files
 rule fastqc_se:
     input:
-        expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir = config["data"]["dir"])
+        expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir = config["data_dir"])
     output:
         expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
     log:
         "../pre-processing/logs/rule-logs/01_fastqc_se/{ref}/01_fastqc_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
     conda:
-        "../env/fastqc.yaml"
+        "../environment_files/fastqc.yaml"
     params:
         output_dir = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir = config["reports_dir"])
     wildcard_constraints:
@@ -29,15 +29,15 @@ rule fastqc_se:
 # Rule to run fastqc on paired-end sequence files
 rule fastqc_pe:
 	input: 
-		r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data"]["dir"]),
-		r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data"]["dir"])
+		r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data_dir"]),
+		r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data_dir"])
 	output:
 		r1 = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"]),
 		r2 = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
 	log:
         "../pre-processing/logs/rule-logs/01_fastqc_pe/{ref}/01_fastqc_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
 	conda:
-		"../env/fastqc.yaml"
+		"../environment_files/fastqc.yaml"
 	params:
 		output_dir = expand("{rep_dir}/01_fastqc/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir = config["reports_dir"])
 	wildcard_constraints:
@@ -57,13 +57,13 @@ rule fastqc_pe:
 rule fastq_screen_se:
     input:
         conf = expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", genomes_dir=config["genomes_dir"]),
-        fq_file = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data"]["dir"])
+        fq_file = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data_dir"])
     output:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
     log:
         "../pre-processing/logs/rule-logs/01_fastq_screen_se/{ref}/01_fastq_screen_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
-        "../env/fastq-screen.yaml"
+        "../environment_files/fastq-screen.yaml"
     params:
         out_dir = expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"])
     threads: 6
@@ -79,15 +79,15 @@ rule fastq_screen_se:
 rule fastq_screen_pe:
     input:
         conf = expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", genomes_dir=config["genomes_dir"]),
-        r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data"]["dir"]),
-        r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data"]["dir"])
+        r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data_dir"]),
+        r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data_dir"])
     output:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"]),
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
     log:
         "../pre-processing/logs/rule-logs/01_fastq_screen_pe/{ref}/01_fastq_screen_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
-        "../env/fastq-screen.yaml"
+        "../environment_files/fastq-screen.yaml"
     threads: 6
     wildcard_constraints:
         layout = "pe"
