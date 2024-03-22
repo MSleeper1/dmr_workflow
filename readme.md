@@ -1,6 +1,6 @@
 # DMRworkflow: automating differential methylation analysis of DNA methylation sequencing data
 
-This workflow is being developed as part of a [graduate research project]("supplementary/project_background.md") to analyze whole genome bisulfite sequencing (WGBS) data from the Sequence Read Archive (SRA). 
+This workflow is being developed as part of a [graduate research project](supplementary/project_background.md) to analyze whole genome bisulfite sequencing (WGBS) data from the Sequence Read Archive (SRA). 
 DMRworkflow uses Snakemake workflow management in conjunction with Slurm workload manager to improve the automation and reproducibility of genomic data analysis on an HPC. 
 
 ### Analysis steps included in pipeline
