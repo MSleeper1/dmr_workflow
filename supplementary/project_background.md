@@ -15,7 +15,7 @@ Epigenome-wide association studies (EWAS) investigate relationships between epig
 
 DMRs associated with a condition are identified by comparing DNA methylation (DNAm) in two groups.
 
-![Screen Shot 2023-12-12 at 12.10.34 PM](https://hackmd.io/_uploads/r19wRN8UT.png)
+<img src="https://hackmd.io/_uploads/r19wRN8UT.png" width=80% height=80%>
 
 Global loss of DNAm is a common feature of cancer cells, with hypomethylation of intergenic repeats and gene promoters. This hypomethylation can lead to genomic instability.
 
