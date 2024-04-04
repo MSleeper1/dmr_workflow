@@ -8,7 +8,7 @@
 #       --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} 
 #       --error={cluster.error} --job-name={cluster.name}" --jobs 5 --use-conda
 
-# cluster configuration
+### default cluster configuration ###
 __default__:
     partition: med2                                             # partition to submit jobs to (-p, --partition=PARTITION)
     time: 0-01:00:00                                            # time limit for each job in D-HH:MM:SS (-t, --time=TIME)
@@ -32,10 +32,11 @@ rerun-incomplete: True                                          # rerun jobs if 
 printshellcmds: True                                            # print shell commands in job scripts     
 scheduler: greedy                                               # scheduler to use (greedy or sequential)
 use-conda: True                                                 # use conda to manage software dependencies
-    
-bwameth_index_ref_genome:                                   ### rule specific settings ###
-    time: 05:00:00                                            # time limit for each job (D-HH:MM)
-    mem_mb: 15000                                                # memory limit for each job (in MB)       
+
+ ### rule specific settings ###
+bwameth_index_ref_genome:                                       # rule name 
+    time: 05:00:00                                              # time limit for each job (D-HH:MM)
+    mem_mb: 15000                                               # memory limit for each job (in MB)       
 
 bismark_index_ref_genome:                                   
     time: 05:00:00
@@ -52,6 +53,13 @@ sra_get_data_se:
 trim_galore_se:
     time: 03:00:00
     mem_mb: 15000
+
+
+fastq_screen_se:                                                   # OOM error with 1000 MB
+    mem_mb: 5000
+
+fastq_screen_pe:
+    mem_mb: 5000
 
 bismark_mapping_se:
     time: 0-20:00:00
