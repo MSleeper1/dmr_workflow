@@ -19,6 +19,9 @@ rule fastq_screen_genome_prep:
     conda:
         "../environment_files/fastq-screen.yaml"
 
+    shadow: 
+        "shallow"
+
     params:
         genomes_dir=expand("{genomes_dir}", genomes_dir=config["genomes_dir"])
     

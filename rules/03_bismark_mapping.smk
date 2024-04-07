@@ -18,6 +18,9 @@ rule bismark_mapping_se:
     conda:
         "../environment_files/bismark.yaml"
 
+    shadow: 
+        "shallow"
+
     params:
         output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),
         bismark_idx_dir = expand("{ref_dir}/bismark", ref_dir = config["ref"]["dir"]),
@@ -32,11 +35,13 @@ rule bismark_mapping_se:
         """
         echo "making output directory {params.output_dir}" > {log}
         mkdir -p {params.output_dir} 2>>{log}
+        echo "making temp directory {params.temp_dir}" >> {log}
+        mkdir -p {params.temp_dir} 2>>{log}
         echo "running bismark on {input.read_se}"
         bismark --bowtie2 --temp_dir {params.temp_dir} --output_dir {params.output_dir} {params.bismark_idx_dir} {input.read_se} >> {log} 2>>{log}
         echo "making report directory: {params.report_dir}" >> {log}
         mkdir -p {params.report_dir} 2>>{log}
-        echo " moving {params.output_dir}/{params.accession}_trimmed_bismark_bt2_SE_report.txt to {params.report_dir}" >> {log}
+        echo "moving {params.output_dir}/{params.accession}_trimmed_bismark_bt2_SE_report.txt to {params.report_dir}" >> {log}
         mv -f -v --target-directory={params.report_dir} {params.output_dir}/{params.accession}_trimmed_bismark_bt2_SE_report.txt 2>>{log}
         rm -rf {params.temp_dir}
         """
@@ -58,6 +63,9 @@ rule bismark_mapping_pe:
     conda:
         "../environment_files/bismark.yaml"
 
+    shadow: 
+        "shallow"
+
     params:
         output_dir = expand("{data_dir}/03_aligned_bismark_bwt2/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),
         bismark_idx_dir = expand("{ref_dir}/bismark", ref_dir = config["ref"]["dir"]),
@@ -72,11 +80,13 @@ rule bismark_mapping_pe:
         """
         echo "making output directory {params.output_dir}" > {log}
         mkdir -p {params.output_dir} 2>>{log}
+        echo "making temp directory {params.temp_dir}" >> {log}
+        mkdir -p {params.temp_dir} 2>>{log}
         echo "running bismark on {input.r1} and {input.r2}"
         bismark --bowtie2 --temp_dir {params.temp_dir} --output_dir {params.output_dir} {params.bismark_idx_dir} -1 {input.r1} -2 {input.r2} >> {log} 2>>{log}
         echo "making report directory: {params.report_dir}" >> {log}
         mkdir -p {params.report_dir} 2>>{log}
-        echo " moving {params.output_dir}/{params.accession}_trimmed_bismark_bt2_SE_report.txt to {params.report_dir}" >> {log}
+        echo "moving {params.output_dir}/{params.accession}_trimmed_bismark_bt2_SE_report.txt to {params.report_dir}" >> {log}
         mv -f -v --target-directory={params.report_dir} {params.output_dir}/{params.accession}_trimmed_bismark_bt2_PE_report.txt 2>>{log}
         rm -rf {params.temp_dir}
         """

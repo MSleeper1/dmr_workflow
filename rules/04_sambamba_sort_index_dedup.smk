@@ -19,7 +19,7 @@ rule sambamba_sort_index_markdups:
         report = expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     log:
-        expand("{rep_dir}/04_sambamba_sort_index_markdups/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
+        expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     conda:
         "../environment_files/sambamba.yaml"

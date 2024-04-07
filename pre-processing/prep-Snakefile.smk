@@ -28,8 +28,6 @@ configfile: "../config.yaml"
 
 #### sample info ####
 sample_info = swf.get_sample_info_df(config["samples_tsv"])
-sample_info_se = sample_info[sample_info['layout'] == 'se']
-sample_info_pe = sample_info[sample_info['layout'] == 'pe']
 
 #### default rule ####
 rule all:
@@ -58,6 +56,11 @@ include: "../rules/06_multiqc_compile_reports.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
+
+# Must uncomment these lines to include these intermediate files in the rule all
+# sample_info_se = sample_info[sample_info['layout'] == 'se']
+# sample_info_pe = sample_info[sample_info['layout'] == 'pe']
+
           # ### 00 reference genome file prep ###
           # expand("{ref_dir}/{fasta}.fa.gz", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),  # rsync_get_ref_genome output
           # expand("{ref_dir}/{fasta}.fa", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),  # rsync_get_ref_genome unzipped output

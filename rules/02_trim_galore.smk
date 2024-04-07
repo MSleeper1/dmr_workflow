@@ -18,6 +18,9 @@ rule trim_galore_se:
         stdout = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.out",
         stderr = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
 
+    shadow: 
+        "shallow"
+
     conda:
         "../environment_files/trim_galore.yaml"
 
@@ -55,7 +58,12 @@ rule trim_galore_pe:
         trim_reports = expand("{rep_dir}/02_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_{read}.fastq_trimming_report.txt", rep_dir=config["reports_dir"], read=["1", "2"])
 
     log:
-        "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
+        stdout = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.out",
+        stderr = "../pre-processing/logs/rule-logs/02_trim_galore_se/{ref}/02_trim_galore_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
+
+
+    shadow: 
+        "shallow"
 
     conda:
         "../environment_files/trim_galore.yaml"

@@ -27,4 +27,10 @@ rule all:
 # ##### include rules #####
 include:"rules/06_wgbstools_segmentation.smk"
 
+onsuccess:
+    print("Workflow finished, no error")
+
+onerror:
+    print("An error occurred")
+
 

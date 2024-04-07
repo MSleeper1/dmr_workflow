@@ -54,14 +54,17 @@ trim_galore_se:
     time: 03:00:00
     mem_mb: 15000
 
-
 fastq_screen_se:                                                   # OOM error with 1000 MB
-    mem_mb: 5000
+    mem_mb: 20000
 
 fastq_screen_pe:
-    mem_mb: 5000
+    mem_mb: 20000
 
 bismark_mapping_se:
+    time: 0-20:00:00
+    mem_mb: 20000
+
+bismark_mapping_pe:
     time: 0-20:00:00
     mem_mb: 20000
 
@@ -70,19 +73,10 @@ bwameth_mapping_se:
     mem_mb: 20000
     cpus-per-task: 4
 
-# bwameth_mapping_se_pipe:
-#     time: 0-20:00:00
-#     mem_mb: 20000
-#     cpus-per-task: 8
-
-# bwameth_mapping_pe_pipe:
-#     time: 0-20:00:00
-#     mem_mb: 20000
-#     cpus-per-task: 8
-
-bismark_mapping_pe:
+bwameth_mapping_pe:
     time: 0-20:00:00
     mem_mb: 20000
+    cpus-per-task: 4
 
 sambamba_sort_index_markdups:
     time: 0-10:00:00
