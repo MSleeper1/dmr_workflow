@@ -14,6 +14,9 @@ rule segment_betas:
     conda:
         "../environment_files/wgbstools.yaml"
 
+    shadow:
+        "shallow"
+
     shell: 
         """
         wgbstools segment --betas {input.betas} --min_cpg 3 --max_bp 2000 -o {output.blocks}

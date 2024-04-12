@@ -16,6 +16,9 @@ rule bwameth_index_ref_genome:
     conda:
         "../environment_files/bwameth.yaml"
 
+    shadow:
+        "shallow"
+
     params:
         bwa_dir = config["ref"]["bwa_idx_dir"],
         fasta = config["ref"]["fasta"]

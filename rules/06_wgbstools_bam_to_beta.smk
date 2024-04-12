@@ -3,7 +3,7 @@
 rule wgbstools_convert_bam_to_beta:
     ''' convert bams into pat and beta files'''
     input:
-        bam = expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]), # sambamba_merge output
+        bam = expand("{data_dir}/05_merged_sambamba_bwa/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]), # sambamba_merge output
         ref = expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"])  # wgbstools_init_ref output
 
     output:
@@ -13,6 +13,9 @@ rule wgbstools_convert_bam_to_beta:
 
     conda:
         "../environment_files/wgbstools.yaml"
+
+    shadow:
+        "shallow"
 
     params:
         outdir = expand("{data_dir}/06_wgbstools_betas/", data_dir=config["data_dir"]),

@@ -20,6 +20,9 @@ rule bwameth_mapping_se:
         
     conda: 
         "../environment_files/bwameth.yaml"
+    
+    shadow: 
+        "shallow"
 
     threads: 3
 
@@ -38,8 +41,8 @@ rule bwameth_mapping_se:
         rm {params.sam} >> {log} 2>> {log}
         """
 
-# bwameth_mapping_pe_pipe: align paired-end reads to reference genome using bwameth
-rule bwameth_mapping_pe_pipe:
+# bwameth_mapping_pe: align paired-end reads to reference genome using bwameth
+rule bwameth_mapping_pe:
     input:
         read_1 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_trimmed.fq", data_dir=config["data_dir"]),
         read_2 = expand("{data_dir}/02_trimmed_trim_galore/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_trimmed.fq", data_dir=config["data_dir"]),
@@ -54,6 +57,9 @@ rule bwameth_mapping_pe_pipe:
 
     conda:
         "../environment_files/bwameth.yaml"
+
+    shadow: 
+        "shallow"
 
     threads: 6
 

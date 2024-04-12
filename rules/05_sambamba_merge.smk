@@ -9,7 +9,7 @@
 # input: deduped bam files (04)
 # output: merged bam file (05)
 
-# # has benn tested with files that do not need to be merged
+# # has been tested with files that do not need to be merged
 # # still need to test rule for sambamba merge with files that need to be merged
 # symlinks were experiencing latency wait time errors. To avoid specifying latency wait time for all jobs, I added a sleep 10 seconds command to the shell script. This will allow the symlink to be created before the next rule_all is executed.
 
@@ -18,13 +18,17 @@ rule sambamba_merge_bwameth:
        bams = lambda wildcards: expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{accession}_trimmed_sorted_dedup.bam", data_dir=config["data_dir"], accession = sample_info[sample_info["srx_id"] == wildcards.srx_id]["accession"].tolist())
     
     output:
-        merged_bam = temporary(expand("{data_dir}/05_merged_sambamba/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]))
+        merged_bam = temporary(expand("{data_dir}/05_merged_sambamba_bwa/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"])),
+        bai = expand("{data_dir}/05_merged_sambamba_bwa/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", data_dir=config["data_dir"])
 
     log:
-        "../pre-processing/logs/rule-logs/05_sambamba_merge/{ref}/05_sambamba_merge-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
+        "../pre-processing/logs/rule-logs/05_sambamba_merge_bwameth/{ref}/05_sambamba_merge_bwameth-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     conda:
         "../environment_files/sambamba.yaml"
+
+    shadow:
+        "shallow"
 
     threads: 3
     
@@ -54,13 +58,17 @@ rule sambamba_merge_bismark:
         bams = lambda wildcards: expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{accession}_deduped_bismark_bt2.bam", data_dir=config["data_dir"], accession = sample_info[sample_info["srx_id"] == wildcards.srx_id]["accession"].tolist())
     
     output:
-        merged_bam = temporary(expand("{data_dir}/05_merged_sambamba/bismark/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"]))
+        merged_bam = temporary(expand("{data_dir}/05_merged_sambamba_bis/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", data_dir=config["data_dir"])),
+        bai = expand("{data_dir}/05_merged_sambamba_bis/{{ref}}-{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", data_dir=config["data_dir"])
 
     log:
         "../pre-processing/logs/rule-logs/05_sambamba_merge_bismark/{ref}/05_sambamba_merge_bismark-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
 
     conda:
         "../environment_files/sambamba.yaml"
+
+    shadow:
+        "shallow"
 
     threads: 3
     

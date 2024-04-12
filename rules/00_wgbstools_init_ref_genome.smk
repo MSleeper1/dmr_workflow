@@ -15,6 +15,9 @@ rule wgbstools_init_ref_genome:
     conda:
         "../environment_files/wgbstools.yaml"
 
+    shadow:
+        "shallow"
+
     params:
         genome=config["ref"]["wgbstools_ref_name"],
         unzipped_ref = expand("{ref_dir}/{fasta}.fa", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),
