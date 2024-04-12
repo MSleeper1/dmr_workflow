@@ -1,6 +1,8 @@
 ### data accession and metadata info tsv (can be freely changed) ###
 samples_tsv: "/home/msleeper/workflows/dmr_workflow/supplementary/data/318_test_data.tsv" 
 
+base_dir: "/home/msleeper/workflows/dmr_workflow" # path to workflow directory
+
 ### directories for outputs (can be freely changed) ###
 genomes_dir: "/home/msleeper/scratch/genomes" # path to genome output directory
 data_dir: "/home/msleeper/scratch/data" # path to data output directory 

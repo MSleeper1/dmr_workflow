@@ -60,19 +60,19 @@ rule fastq_screen_se:
         fq_file = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir=config["data_dir"])
     output:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
-    log:
-        "../pre-processing/logs/rule-logs/01_fastq_screen_se/{ref}/01_fastq_screen_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
         "../environment_files/fastq-screen.yaml"
     params:
         out_dir = expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"])
+    shadow: 
+        "shallow"
     threads: 6
     wildcard_constraints:
         layout = "se"
     shell:
         """
         mkdir -p {params.out_dir}
-        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.fq_file} >2 {log}
+        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.fq_file}
         """
 
 # Rule to run fastq_screen on paired-end sequence files
@@ -84,16 +84,16 @@ rule fastq_screen_pe:
     output:
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"]),
         expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2_screen.{suf}", rep_dir=config["reports_dir"], suf=["txt", "html"])
-    log:
-        "../pre-processing/logs/rule-logs/01_fastq_screen_pe/{ref}/01_fastq_screen_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.err"
     conda:
         "../environment_files/fastq-screen.yaml"
     threads: 6
+    shadow: 
+        "shallow"
     wildcard_constraints:
         layout = "pe"
     shell:
         """
         mkdir -p {params.out_dir}
-        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.r1} >2 {log}
-        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.r2} >2 {log}
+        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.r1}
+        fastq_screen --bisulfite --aligner bowtie2 --conf {input.conf} --threads {threads} --outdir {params.out_dir} --force --quiet {input.r2}
         """

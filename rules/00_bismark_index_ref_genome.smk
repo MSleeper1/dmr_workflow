@@ -15,6 +15,9 @@ rule bismark_index_ref_genome:
     
     conda:
         "../environment_files/bismark.yaml"
+    
+    shadow:
+        "shallow"
 
     params:
         bismk_args = config["prep_args"]["bismark_genome_prep"],

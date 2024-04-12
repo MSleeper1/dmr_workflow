@@ -35,8 +35,17 @@ sample_info_pe = sample_info[sample_info['layout'] == 'pe']
 rule all:
      input:
           expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), # wgbstools output
-          expand("{rep_dir}/prep_multiqc_data/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/prep_multiqc_data", rep_dir=config["reports_dir"])
+          expand("{rep_dir}/06_multiqc_data/bis/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/bwa/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/01_raw/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/02_trimmed/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/03_bwameth_mapped/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/03_bismark_mapped/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/04_sambamba_deduped_bwa/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/04_bismark_deduped_bis/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/05_post_merge_bwa/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/05_post_merge_bis/multiqc.html", rep_dir=config["reports_dir"]),
+          expand("{rep_dir}/06_multiqc_data/06_methyl_extract_bis/multiqc.html", rep_dir=config["reports_dir"])
 
 ##### include rules #####
 include: "../rules/00_rsync_get_ref_genome.smk"
@@ -50,14 +59,21 @@ include: "../rules/02_trim_galore.smk"
 include: "../rules/03_bwameth_mapping.smk"
 include: "../rules/03_bismark_mapping.smk"
 include: "../rules/04_sambamba_sort_index_dedup.smk"
+include: "../rules/04_bismark_dedup.smk"
 include: "../rules/04_qc_reporting_post_dedup.smk"
 include: "../rules/05_sambamba_merge.smk"
 include: "../rules/05_qc_reporting_post_merge.smk"
 include: "../rules/06_wgbstools_bam_to_beta.smk"
+include: "../rules/06_bismark_methylation_extractor.smk"
 include: "../rules/06_multiqc_compile_reports.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
+
+# Must uncomment these lines to include these intermediate files in the rule all
+# sample_info_se = sample_info[sample_info['layout'] == 'se']
+# sample_info_pe = sample_info[sample_info['layout'] == 'pe']
+
           # ### 00 reference genome file prep ###
           # expand("{ref_dir}/{fasta}.fa.gz", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),  # rsync_get_ref_genome output
           # expand("{ref_dir}/{fasta}.fa", ref_dir=config["ref"]["dir"], fasta=config["ref"]["fasta"]),  # rsync_get_ref_genome unzipped output
