@@ -16,10 +16,10 @@ rule sambamba_sort_index_markdups:
     output:
         bam = temporary(expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam", data_dir=config["data_dir"])),
         bai = expand("{data_dir}/04_deduped_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_trimmed_sorted_dedup.bam.bai", data_dir=config["data_dir"]),
-        report = expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
+        report = expand("{rep_dir}/04_sambamba_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     log:
-        expand("{rep_dir}/04_sambamba/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
+        expand("{rep_dir}/04_sambamba_dedup/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}-{{accession}}.log", rep_dir=config["reports_dir"])
 
     conda:
         "../environment_files/sambamba.yaml"

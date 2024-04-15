@@ -14,7 +14,7 @@ rule fastq_screen_genome_prep:
         expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", genomes_dir=config["genomes_dir"])
     
     log:
-        "../pre-processing/logs/rule-logs/fastq_screen/fastq_screen_genome_prep.err"
+        "../pre-processing/logs/rule-logs/00_genome_prep/00_fastq_screen_genome_prep.err"
 
     conda:
         "../environment_files/fastq-screen.yaml"

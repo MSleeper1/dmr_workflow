@@ -31,10 +31,10 @@ rule fastqc_post_dedup_bwa:
 
 rule fastqc_post_dedup_bis:
 	input: 
-		bis_bam = expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_deduped_bismark_bt2.bam", data_dir=config["data_dir"])
+		bis_bam = expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_bismark.deduplicated.bam", data_dir=config["data_dir"])
 
 	output:
-		expand("{rep_dir}/04_fastqc_post_dedup_bis/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_deduped_bismark_bt2_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
+		expand("{rep_dir}/04_fastqc_post_dedup_bis/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_bismark.deduplicated_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"])
 
 	log:
 		"../pre-processing/logs/rule-logs/04_fastqc_post_dedup_bis/{ref}/04_fastqc_post_dedup-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
@@ -72,10 +72,10 @@ rule samtools_stats_bwa:
 
 rule samtools_stats_bis:
     input:
-        bam = expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_deduped_bismark_bt2.bam", data_dir=config["data_dir"])
+        bam = expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_bismark.deduplicated.bam", data_dir=config["data_dir"])
 
     output:
-        report = expand("{rep_dir}/04_samtools_post_dedup_bis/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_deduped_bismark_bt2.bam.stats", rep_dir=config["reports_dir"])
+        report = expand("{rep_dir}/04_samtools_post_dedup_bis/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_bismark.deduplicated.bam.stats", rep_dir=config["reports_dir"])
 
     conda:
         "../environment_files/samtools.yaml"

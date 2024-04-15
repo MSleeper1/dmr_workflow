@@ -31,21 +31,34 @@ sample_info = swf.get_sample_info_df(config["samples_tsv"])
 sample_info_se = sample_info[sample_info['layout'] == 'se']
 sample_info_pe = sample_info[sample_info['layout'] == 'pe']
 
+#### set up conditional files for rule all input ####
+rule_all_input_list = [
+     expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), 
+     expand("{rep_dir}/summary/01-06_bis_multiqc.html", rep_dir=config["reports_dir"]), 
+     expand("{rep_dir}/summary/01-06_bwa_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/01_raw_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/02_trimmed_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/03_bwameth_mapping_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/03_bismark_mapping_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/04_bwa_deduped_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/04_bis_deduped_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/05_bwa_post_merge_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/05_bis_post_merge_multiqc.html", rep_dir=config["reports_dir"]),
+     expand("{rep_dir}/summary/06_bis_methyl_extract_multiqc.html", rep_dir=config["reports_dir"])
+     ]
+
+if config["bismark"] == False:
+     rule_all_input_list.remove(expand("{rep_dir}/summary/01-06_bis_multiqc.html", rep_dir=config["reports_dir"]))
+     rule_all_input_list.remove(expand("{rep_dir}/summary/03_bismark_mapping_multiqc.html", rep_dir=config["reports_dir"]))
+     rule_all_input_list.remove(expand("{rep_dir}/summary/04_bis_deduped_multiqc.html", rep_dir=config["reports_dir"]))
+     rule_all_input_list.remove(expand("{rep_dir}/summary/05_bis_post_merge_multiqc.html", rep_dir=config["reports_dir"]))
+     rule_all_input_list.remove(expand("{rep_dir}/summary/06_bis_methyl_extract_multiqc.html", rep_dir=config["reports_dir"]))
+
 #### default rule ####
 rule all:
      input:
-          expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()), # wgbstools output
-          expand("{rep_dir}/06_multiqc_data/bis/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/bwa/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/01_raw/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/02_trimmed/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/03_bwameth_mapped/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/03_bismark_mapped/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/04_sambamba_deduped_bwa/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/04_bismark_deduped_bis/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/05_post_merge_bwa/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/05_post_merge_bis/multiqc.html", rep_dir=config["reports_dir"]),
-          expand("{rep_dir}/06_multiqc_data/06_methyl_extract_bis/multiqc.html", rep_dir=config["reports_dir"])
+          rule_all_input_list
+
 
 ##### include rules #####
 include: "../rules/00_rsync_get_ref_genome.smk"

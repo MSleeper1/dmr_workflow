@@ -8,7 +8,7 @@ rule rsync_get_ref_genome:
         unzipped_fasta = expand("{ref_dir}/{fasta}.fa", ref_dir = config["ref"]["dir"], fasta = config["ref"]["fasta"])
     
     log:
-        expand("../pre-processing/logs/rule-logs/rsync_get_ref_genome/rsync_get_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
+        expand("../pre-processing/logs/rule-logs/00_genome_prep/00_rsync_get_ref_genome--{fasta}.log", fasta = config["ref"]["fasta"])
 
     conda:
         "../environment_files/rsync.yaml"
