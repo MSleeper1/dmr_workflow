@@ -14,8 +14,8 @@ rule wgbstools_convert_bam_to_beta:
     conda:
         "../environment_files/wgbstools.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     params:
         outdir = expand("{data_dir}/06_wgbstools_betas/", data_dir=config["data_dir"]),
@@ -28,4 +28,3 @@ rule wgbstools_convert_bam_to_beta:
         mkdir -p {params.tempdir}
         wgbstools bam2pat -f --out_dir {params.outdir} --mbias --genome {params.ref_name} --temp_dir {params.tempdir} {input.bam} > {log} 2>&1
         """
-

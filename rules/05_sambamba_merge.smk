@@ -27,8 +27,8 @@ rule sambamba_merge_bwameth:
     conda:
         "../environment_files/sambamba.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     threads: 3
     
@@ -69,8 +69,8 @@ rule sambamba_merge_bismark:
     conda:
         "../environment_files/sambamba.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     threads: 3
     

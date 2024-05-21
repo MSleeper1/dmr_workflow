@@ -24,8 +24,8 @@ rule sambamba_sort_index_markdups:
     conda:
         "../environment_files/sambamba.yaml"
     
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     params:
         temp_dir = expand("{data_dir}/temp/sambamba/{{ref}}-{{accession}}", data_dir=config["data_dir"]),

@@ -4,7 +4,7 @@
 # sra_get_data_se: rule to download single-end raw sequence files from the SRA database.
 rule sra_get_data_se:
     output:
-        temporary(expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir = config["data_dir"]))
+        expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}.fastq", data_dir = config["data_dir"])
     
     log:
        "../pre-processing/logs/rule-logs/01_sra_get_data/{ref}/01_sra_get_data-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"
@@ -30,8 +30,8 @@ rule sra_get_data_se:
 # sra_get_data_pe: rule to download paired-end raw sequence files from the SRA database.
 rule sra_get_data_pe:
     output:
-        r1 = temporary(expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data_dir"])),
-        r2 = temporary(expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data_dir"]))
+        r1 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_1.fastq", data_dir = config["data_dir"]),
+        r2 = expand("{data_dir}/01_raw_sequence_files/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{{accession}}_2.fastq", data_dir = config["data_dir"])
     
     log:
         "../pre-processing/logs/rule-logs/01_sra_get_data/{ref}/01_sra_get_data-{ref}-{patient_id}-{group}-{srx_id}-{layout}-{accession}.log"

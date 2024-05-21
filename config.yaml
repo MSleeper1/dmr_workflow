@@ -4,7 +4,7 @@
 bismark: True # set to true if you want the bismark processing pathway to run in addition to bwameth
 
 ### data accession and metadata info tsv (can be freely changed) ###
-samples_tsv: "/home/msleeper/workflows/dmr_workflow/supplementary/data/318_test_data.tsv" 
+samples_tsv: "/home/msleeper/workflows/dmr_workflow/supplementary/data/402_test_data.tsv" 
 
 workdir: "/home/msleeper/workflows/dmr_workflow" # path to workflow directory
 
@@ -42,3 +42,7 @@ prep_args:
   bismark_genome_prep: "--verbose --bowtie2" # bismark arguments
   trim_galore_se: "--phred33" # trim_galore arguments (do not add --fastqc or -o as they are specified within the rule)
   # trim galore removed all reads for 318 files due to being trimmed below 20 bp length when using -q 67
+
+# mosdepth:
+#     threads : 4
+#     mapping_quality : 10

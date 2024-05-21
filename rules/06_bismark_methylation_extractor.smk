@@ -24,8 +24,8 @@ rule bismark_methylation_extractor_se:
         "../pre-processing/logs/rule-logs/06_bismark_methylation_extractor_se/{ref}/06_bismark_methylation_extractor_se-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
     conda:
         "../environment_files/bismark.yaml"
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
     wildcard_constraints:
         layout="se"
     params:
@@ -60,8 +60,8 @@ rule bismark_methylation_extractor_pe:
         "../pre-processing/logs/rule-logs/06_bismark_methylation_extractor_pe/{ref}/06_bismark_methylation_extractor_pe-{ref}-{patient_id}-{group}-{srx_id}-{layout}.log"
     conda:
         "../environment_files/bismark.yaml"
-    shadow:
-        "shallow"    
+    # shadow:
+    #     "shallow"    
     wildcard_constraints:
         layout="pe"
     params:

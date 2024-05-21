@@ -21,8 +21,8 @@ rule bwameth_mapping_se:
     conda: 
         "../environment_files/bwameth.yaml"
     
-    shadow: 
-        "shallow"
+    # shadow: 
+    #     "shallow"
 
     threads: 3
 
@@ -58,8 +58,8 @@ rule bwameth_mapping_pe:
     conda:
         "../environment_files/bwameth.yaml"
 
-    shadow: 
-        "shallow"
+    # shadow: 
+    #     "shallow"
 
     threads: 6
 

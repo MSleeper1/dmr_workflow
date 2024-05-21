@@ -12,8 +12,8 @@ rule bismark_deduplicate:
     conda:
         "../environment_files/bismark.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
     
     params:
         output_dir = expand("{data_dir}/04_bismark_deduped/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", data_dir=config["data_dir"]),

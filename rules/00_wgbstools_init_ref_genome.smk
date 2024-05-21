@@ -15,8 +15,8 @@ rule wgbstools_init_ref_genome:
     conda:
         "../environment_files/wgbstools.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     params:
         genome=config["ref"]["wgbstools_ref_name"],

@@ -14,8 +14,8 @@ rule segment_betas:
     conda:
         "../environment_files/wgbstools.yaml"
 
-    shadow:
-        "shallow"
+    # shadow:
+    #     "shallow"
 
     shell: 
         """

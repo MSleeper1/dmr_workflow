@@ -64,8 +64,8 @@ rule fastq_screen_se:
         "../environment_files/fastq-screen.yaml"
     params:
         out_dir = expand("{rep_dir}/01_fastq_screen/{{ref}}/{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}", rep_dir=config["reports_dir"])
-    shadow: 
-        "shallow"
+    # shadow: 
+    #     "shallow"
     threads: 6
     wildcard_constraints:
         layout = "se"
@@ -87,8 +87,8 @@ rule fastq_screen_pe:
     conda:
         "../environment_files/fastq-screen.yaml"
     threads: 6
-    shadow: 
-        "shallow"
+    # shadow: 
+    #     "shallow"
     wildcard_constraints:
         layout = "pe"
     shell:

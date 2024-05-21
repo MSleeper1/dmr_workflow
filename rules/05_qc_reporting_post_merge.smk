@@ -241,3 +241,45 @@ rule mosdepth_bis:
     threads: 4  # This value - 1 will be sent to `--threads`
     wrapper:
         "v3.4.1/bio/mosdepth"
+
+# # Get the depth for each sample
+# rule mosdepth:
+#     input:
+#         '3_aligned_sorted_markdupes/{sample}.sorted.markdupes.bai',
+#         bam = '3_aligned_sorted_markdupes/{sample}.sorted.markdupes.bam'
+#     output:
+#         '6_mosdepth/{sample}.sorted.markdupes.mosdepth.global.dist.txt',
+#         '6_mosdepth/{sample}.sorted.markdupes.mosdepth.summary.txt',
+#         '6_mosdepth/{sample}.sorted.markdupes.per-base.bed.gz',
+#         '6_mosdepth/{sample}.sorted.markdupes.per-base.bed.gz.csi'
+#     threads:
+#         config['mosdepth']['threads']
+#     params:
+#         mapping_quality = config['mosdepth']['mapping_quality'],
+#         mosdepth_path = config['paths']['mosdepth_path'],
+#         out_prefix = '6_mosdepth/{sample}.sorted.markdupes'
+#     shell:
+#         '''
+#         {params.mosdepth_path} \
+#         -x \
+#         -t {threads} \
+#         -Q {params.mapping_quality} \
+#         {params.out_prefix} \
+#         {input.bam}
+#         '''
+
+# # Calculate the coverage from the mosdepth output
+# rule calc_coverage:
+#     input:
+#         bed = '6_mosdepth/{sample}.sorted.markdupes.per-base.bed.gz'
+#     output:
+#         '6_mosdepth/{sample}.sorted.markdupes.coverage.txt'
+#     params:
+#         genome = REFERENCE_GENOME
+#     shell:
+#         '''
+#         scripts/mosdepth_to_x_coverage.py \
+#         -f {params.genome} \
+#         -m {input.bed} \
+#         > {output}
+#         '''

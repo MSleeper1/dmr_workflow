@@ -83,7 +83,7 @@ rule multiqc_compile_reports_bis:
         expand("{rep_dir}/03_bismark_bwt2/{se.ref}/{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2_SE_report.txt", rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # bismark_mapping se report
         expand("{rep_dir}/03_bismark_bwt2/{pe.ref}/{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2_PE_report.txt", rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # bismark_mapping pe report
         # 04 dedup reports from bismark
-        expand("{rep_dir}/04_bismark_deduplication/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}__bismark.deduplication_report.txt", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # bismark_deduplication output report for bismark mapped reads
+        expand("{rep_dir}/04_bismark_deduplication/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplication_report.txt", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # bismark_deduplication output report for bismark mapped reads
         # 04 QC post-dedup
         expand("{rep_dir}/04_fastqc_post_dedup_bis/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"], sample=sample_info.itertuples()), # fastqc bis output post-dedup
         expand("{rep_dir}/04_samtools_post_dedup_bis/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated.bam.stats", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # samtools_stats output bismark mapped
@@ -364,7 +364,7 @@ rule multiqc_compile_reports_04_bis:
     input:
         expand("{rep_dir}/04_fastqc_post_dedup_bis/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated_fastqc.{suf}", rep_dir = config["reports_dir"], suf=["html","zip"], sample=sample_info.itertuples()), # fastqc bis output post-dedup
         expand("{rep_dir}/04_samtools_post_dedup_bis/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated.bam.stats", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # samtools_stats output bismark mapped
-        expand("{rep_dir}/04_bismark_deduplication/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}__bismark.deduplication_report.txt", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # bismark_deduplication output report for bismark mapped reads
+        expand("{rep_dir}/04_bismark_deduplication/{sample.ref}/{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplication_report.txt", sample=sample_info.itertuples(), rep_dir=config["reports_dir"]), # bismark_deduplication output report for bismark mapped reads
     output:
         file = expand("{rep_dir}/summary/04_bis_deduped_multiqc.html", rep_dir=config["reports_dir"]),
         input_list = expand("{rep_dir}/summary/04_bis_deduped_qc_report_list.txt", rep_dir=config["reports_dir"])
