@@ -10,9 +10,9 @@
 
 rule ref_prep_fastqscreen:
     output:
-        directory(expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/", genomes_dir=config["genomes_dir"])),
-        expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", genomes_dir=config["genomes_dir"])
-    
+        directory(expand("{root}/{genomes_dir}/{genome}/FastQ_Screen_Genomes_Bisulfite/", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"])),
+        expand("{root}/{genomes_dir}/{genome}/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"])
+
     log:
         "logs/initialize_rules/ref_prep_fastqscreen.err"
 
@@ -23,11 +23,13 @@ rule ref_prep_fastqscreen:
     #     "shallow"
 
     params:
-        genomes_dir=expand("{genomes_dir}", genomes_dir=config["genomes_dir"])
+        genomes_dir = expand("{root}/{genomes_dir}/{genome}", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"])
     
     shell:
         """
         mkdir -p {params.genomes_dir}
         cd {params.genomes_dir}
+        echo "downloading fastq_screen genomes"
         fastq_screen --bisulfite --get_genomes >2 {log}
+        echo "done"
         """
