@@ -1,0 +1,14 @@
+# Secondary analysis for the DMReproduciple pipeline
+
+This directory contains the workflow to run secondary analysis for the DMReprodicible pipeline.
+
+This involves:
+
+- Trimming the reads.
+- Deduplicating the fastq files.
+- Merging fastq files by sample.
+- Mapping the fastq files to the reference genome.
+- Extracting methylation data into portable beta files.
+- Running quality control checks.
+- Identifying differentially methylated regions between sample groups.
+- Annotating DMR data with gene features.
