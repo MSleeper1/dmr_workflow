@@ -39,10 +39,9 @@ rule_all_input_list = [
     expand("{root}/{genomes_dir}/{genome}/{gtf}.gtf", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"], gtf = config["ref"]["gtf"]),
     expand("{root}/{data_dir}/01_raw_sequence_files/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}.fastq", root = config["root"], data_dir=config["data_dir"], se=sample_info_se.itertuples()), # sra_get_data se output
     expand("{root}/{data_dir}/01_raw_sequence_files/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}{suf}", root = config["root"], data_dir=config["data_dir"], pe=sample_info_pe.itertuples(), suf={"_1.fastq", "_2.fastq"}), # sra_get_data pe R1 and R2 output
-          
+    expand("{root}/{genomes_dir}/{genome}/bismark/Bisulfite_Genome/", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"]),
+    expand("{root}/{genomes_dir}/{genome}/bwameth/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t","c2t.bwt","c2t.pac","c2t.ann","c2t.amb","c2t.sa"], root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"], fasta = config["ref"]["fasta"]),
 
-
-    # expand("{bwa_idx_dir}/{fasta}.fa.gz.bwameth.{suf}", suf=["c2t", "c2t.bwt", "c2t.pac", "c2t.ann", "c2t.amb", "c2t.sa"], bwa_idx_dir=config["ref"]["bwa_idx_dir"], fasta=config["ref"]["fasta"]), # bwameth_index_ref output
     # expand("{bismark_idx_dir}", bismark_idx_dir=config["ref"]["bismark_idx_dir"]),  # bismark_index_ref output
     # expand("{wgbstools_ref_dir}/{genome}", wgbstools_ref_dir=config["ref"]["wgbstools_idx_dir"], genome=config["ref"]["wgbstools_ref_name"]),  # wgbstools_init_ref output
     # expand("{genomes_dir}/FastQ_Screen_Genomes_Bisulfite/", genomes_dir=config["genomes_dir"]),
@@ -66,6 +65,8 @@ rule all:
 ##### include rules #####
 include: "rules/get_ref.smk"
 include: "rules/get_samples.smk"
+include: "rules/ref_index_bismark.smk"
+include: "rules/ref_index_bwameth.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
