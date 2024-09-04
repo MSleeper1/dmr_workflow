@@ -1,0 +1,17 @@
+name: wgbstools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bedtools=2.30.0
+  - bzip2=1.0.8
+  - numpy=1.19.5
+  - pandas=1.1.5
+  - python=3.6.15
+  - samtools=1.11
+  - scipy=1.5.3
+  - tabix=1.11
+  - toolshed=0.4.6
+  - matplotlib=3.3.4
+  - seaborn=0.11.2
