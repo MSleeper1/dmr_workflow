@@ -1,0 +1,8 @@
+name: fastq-screen
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - fastq-screen=0.15.3
+  - bismark=0.24.2
+  - perl-gd
