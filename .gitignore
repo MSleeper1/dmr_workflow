@@ -1,0 +1,55 @@
+# gitignore files specific to the project dmr_workflow #
+########################################################
+
+# annotation files created by the script `0_create_annotation_files.py`
+supplementary/annotation_beds/.
+
+# sample beta files created by the script `5_create_beta_files.py`
+supplementary/betas/.
+
+# scratch files from script development
+src/scratch/.
+
+# scratch files from rule development
+/rules/scratch/
+/pre-processing/scratch/
+/troubleshooting_scratch/
+
+# temporary files
+*.tmp
+*.temp
+tmp/*
+temp/*
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+
+# Snakemake logs and outputs
+.snakemake/
+logs/
+
+# python cache files
+__pycache__/
+/pipeline/pre-processing/__pycache__/
+
+# stderr and stdout from scripts
+*.err
+*.out
+*.log
+*.stderr
+*.stdout
+
+# genome and data files
+*.fq
+*.fq.gz
+*.fastq
+*.fastq.gz
+*.fa
+*.fa.gz
+*.bam
+*.sam
+*.bai
+*.beta
+*.pat
