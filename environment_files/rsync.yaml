@@ -1,0 +1,6 @@
+name: rsync
+channels:
+  - conda-forge
+dependencies:
+  - rsync=3.2.7
+  - gzip=1.13 
