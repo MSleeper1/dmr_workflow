@@ -40,15 +40,15 @@ scheduler: greedy                                               # scheduler to u
 use-conda: True                                                 # use conda to manage software dependencies
 
  ### rule specific settings ###
-bwameth_index_ref_genome:                                       # rule name 
+ref_index_bwameth:                                       # rule name 
     time: 05:00:00                                              # time limit for each job (D-HH:MM)
     mem_mb: 15000                                               # memory limit for each job (in MB)      
 
-bismark_index_ref_genome:                                   
+ref_index_bismark:                                   
     time: 05:00:00
     mem_mb: 15000
 
-wgbstools_init_ref_genome:
+ref_init_wgbstools:
     time: 0:30:00
     mem_mb: 5000   
 
