@@ -22,9 +22,8 @@ ref:
   goldenPath: "//hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.fa.gz" # UCSC genome browser path to reference genome fasta file (can be freely changed)
   
   ### reference index directories ###
-  # wgbstools_idx_dir: "/home/msleeper/programs/wgbs_tools/references" # (only change beginning to match location of wgbs_tools program directory (wgbstools must be set up separately before running the pipeline - should end in "/wgbs_tools/references")
-  # wgbstools_ref_name: "hg38_analysisSet" # wgbs_tools ref index name (can be freely changed to anything)
-  
+  wgbstools_idx_dir: "programs/wgbs_tools/references" # root dir will be appened onto this (only change beginning to match location of wgbs_tools program directory (wgbstools must be set up separately before running the pipeline - should end in "/wgbs_tools/references")
+
   ### annotation file info ###
   gtf: "hg38.knownGene" # prefix for gtf file name (must match file name from gtf_goldenPath without the extentions)
   gtf_goldenPath: "//hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" # UCSC genome browser path to gtf file (can be freely changed but file should end in gtf.gz)
