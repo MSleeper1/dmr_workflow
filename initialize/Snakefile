@@ -49,12 +49,8 @@ rule_all_input_list = [
     # expand("{ref_dir}/{gtf}.{suf}", ref_dir = config["ref"]["dir"], gtf = config["ref"]["gtf"], suf = ["gtf.gz", "gtf"]), # gtf file for ref genome
      ]
 
-# if config["bismark"] == False:
-#      rule_all_input_list.remove(expand("{rep_dir}/summary/01-06_bis_multiqc.html", rep_dir=config["reports_dir"]))
-#      rule_all_input_list.remove(expand("{rep_dir}/summary/03_bismark_mapping_multiqc.html", rep_dir=config["reports_dir"]))
-#      rule_all_input_list.remove(expand("{rep_dir}/summary/04_bis_deduped_multiqc.html", rep_dir=config["reports_dir"]))
-#      rule_all_input_list.remove(expand("{rep_dir}/summary/05_bis_post_merge_multiqc.html", rep_dir=config["reports_dir"]))
-#      rule_all_input_list.remove(expand("{rep_dir}/summary/06_bis_methyl_extract_multiqc.html", rep_dir=config["reports_dir"]))
+if config["bismark"] == False:
+    rule_all_input_list.remove(expand("{root}/{genomes_dir}/{genome}/bismark/Bisulfite_Genome/", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"]))
 
 #### default rule ####
 rule all:
