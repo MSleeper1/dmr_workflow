@@ -1,0 +1,6 @@
+name: bismark
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bismark=0.24.2
