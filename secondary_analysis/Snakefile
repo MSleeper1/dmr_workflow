@@ -54,6 +54,10 @@ rule_all_input_list = [
     expand("{root}/{rep_dir}/03_bismark_bwt2/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bismark_bt2_SE_report.txt", root = config["root"], rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # bismark_mapping se report
     expand("{root}/{data_dir}/03_aligned_bismark_bwt2/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2.bam", root = config["root"], data_dir=config["data_dir"], pe=sample_info_pe.itertuples()), # mapped bam output
     expand("{root}/{rep_dir}/03_bismark_bwt2/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bismark_bt2_PE_report.txt", root = config["root"], rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # bismark_mapping pe report
+    expand("{root}/{data_dir}/03_aligned_bwameth/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", root = config["root"], data_dir=config["data_dir"], se=sample_info_se.itertuples()), # bwameth_mapping se output
+    expand("{root}/{rep_dir}/03_bwameth/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed_bwameth_report.txt", root = config["root"], rep_dir=config["reports_dir"], se=sample_info_se.itertuples()), # bwameth_mapping se report from stderr
+    expand("{root}/{data_dir}/03_aligned_bwameth/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed.bam", root = config["root"], data_dir=config["data_dir"], pe=sample_info_pe.itertuples()), # bwameth_mapping pe output
+    expand("{root}/{rep_dir}/03_bwameth/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}/{pe.accession}_trimmed_bwameth_report.txt", root = config["root"], rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # bwameth_mapping pe report from stderr 
     ]
 
 if config["bismark"] == False:
@@ -96,11 +100,11 @@ rule all:
      input:
           rule_all_input_list
 
-
 ##### include rules #####
 include: "rules/01_qc_reporting.smk"
 include: "rules/02_trim_galore.smk"
 include: "rules/03_bismark_mapping.smk"
+include: "rules/03_bwameth_mapping.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
