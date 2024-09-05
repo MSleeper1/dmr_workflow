@@ -26,7 +26,7 @@ rule bismark_deduplicate:
         echo "making output directory {params.output_dir}" > {log}
         mkdir -p {params.output_dir} 2>>{log}
         echo "running bismark deduplication on {input}"
-        deduplicate_bismark --bam {input} --output_dir {params.output_dir} --outfile {params.base_name} > {log} 2> {log}
+        deduplicate_bismark --bam {input} --output_dir {params.output_dir} --outfile {params.base_name} >> {log} 2>> {log}
         echo "done with deduplication"
         echo "making report directory: {params.report_dir}" >> {log}
         mkdir -p {params.report_dir} 2>>{log}
