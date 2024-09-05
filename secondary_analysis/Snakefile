@@ -67,6 +67,12 @@ rule_all_input_list = [
     expand("{root}/{rep_dir}/04_fastqc_post_dedup_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples()),
     expand("{root}/{rep_dir}/04_samtools_post_dedup_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()),
     expand("{root}/{rep_dir}/04_samtools_post_dedup_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()),
+    expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
+    expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
+    expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
+    expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())
+
+    
     ]
 
 if config["bismark"] == False:
@@ -78,6 +84,8 @@ if config["bismark"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_bismark_deduplication/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplication_report.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark deduplication report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_fastqc_post_dedup_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_samtools_post_dedup_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
 
 if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{data_dir}/03_aligned_bwameth/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", root = config["root"], data_dir=config["data_dir"], se=sample_info_se.itertuples())), # bwameth_mapping se output
@@ -89,6 +97,9 @@ if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_sambamba_bwameth_dedup/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}-{sample.accession}.log", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # sambamba deduplication report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_fastqc_post_dedup_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_samtools_post_dedup_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
+    
 
 # rule_all_input_list = [
 # expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()),
