@@ -143,6 +143,7 @@ include: "rules/03_bwameth_mapping.smk"
 include: "rules/04_bismark_dedup.smk" # bismark deduplication pathway
 include: "rules/04_sambamba_sort_index_dedup.smk" # bwameth deduplication pathway
 include: "rules/04_qc_reporting_post_dedup.smk"
+include: "rules/05_sambamba_merge.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
