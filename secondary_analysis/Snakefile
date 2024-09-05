@@ -70,9 +70,23 @@ rule_all_input_list = [
     expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
     expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
     expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
-    expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())
+    expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()),
+    expand("{root}/{rep_dir}/05_qualimap_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # qualimap report bwa
+    expand("{root}/{rep_dir}/05_qualimap_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # qualimap report bis
+    expand("{root}/{rep_dir}/05_feature_counts_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.featureCounts{suf}", root = config["root"], rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"], sample = sample_info.itertuples()), # featureCounts bwa
+    expand("{root}/{rep_dir}/05_feature_counts_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.featureCounts{suf}", root = config["root"], rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"], sample = sample_info.itertuples()), # featureCounts bis
+    expand("{root}/{rep_dir}/05_fastqc_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples()), # fastqc report bwa
+    expand("{root}/{rep_dir}/05_fastqc_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples()), # fastqc report bis
+    expand("{root}/{rep_dir}/05_samtools_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # samtools stats report bwa
+    expand("{root}/{rep_dir}/05_samtools_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.stats",  root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # samtools stats report bis
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bwa report
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bwa per-base report
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bwa summary report
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis report
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis per-base report
+    expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis summary report
 
-    
+
     ]
 
 if config["bismark"] == False:
@@ -86,6 +100,13 @@ if config["bismark"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_samtools_post_dedup_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_bismark.deduplicated.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_qualimap_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # qualimap report bis
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_feature_counts_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.featureCounts{suf}", root = config["root"], rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"], sample = sample_info.itertuples())), # featureCounts bis
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_fastqc_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples())), # fastqc report bis
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_samtools_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.stats",  root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # samtools stats report bis
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis per-base report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis summary report
 
 if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{data_dir}/03_aligned_bwameth/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", root = config["root"], data_dir=config["data_dir"], se=sample_info_se.itertuples())), # bwameth_mapping se output
@@ -99,6 +120,13 @@ if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/04_samtools_post_dedup_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}/{sample.accession}_trimmed_sorted_dedup.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
     rule_all_input_list.remove(expand("{root}/{data_dir}/05_merged_sambamba_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())),
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_qualimap_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # qualimap report bwa
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_feature_counts_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.featureCounts{suf}", root = config["root"], rep_dir=config["reports_dir"], suf=["", ".summary", ".jcounts"], sample = sample_info.itertuples())), # featureCounts bwa
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_fastqc_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"], sample = sample_info.itertuples())), # fastqc report bwa
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_samtools_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.bam.stats", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # samtools stats report bwa
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa per-base report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa summary report
     
 
 # rule_all_input_list = [
@@ -144,6 +172,7 @@ include: "rules/04_bismark_dedup.smk" # bismark deduplication pathway
 include: "rules/04_sambamba_sort_index_dedup.smk" # bwameth deduplication pathway
 include: "rules/04_qc_reporting_post_dedup.smk"
 include: "rules/05_sambamba_merge.smk"
+include: "rules/05_qc_reporting_post_merge.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
@@ -218,5 +247,3 @@ onsuccess:
 
 onerror:
     print("An error occurred")
-
-
