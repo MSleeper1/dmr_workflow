@@ -2,10 +2,13 @@
 root: "/home/msleeper" # path to root directory
 
 ### conditional configuration ###
-bismark: True # set to true if you want the bismark processing pathway to run in addition to bwameth
+# Alignment options (set to true if you want to run the alignment pathway)
+# must set at least one of these to true to run the pipeline
+bismark: True # set to true if you want the bismark processing pathway to run
+bwameth: True # set to true if you want the bwameth processing pathway to run
 
 ### All directories will have the root path prepended to them later ###
-# Do not include the root path in the config directories/files below
+# Do not include the root path in the config directories or files below
 
 ### data accession and metadata info tsv (can be freely changed) ###
 samples_tsv: "workflows/DMReproducible/supplementary/402_test_data.tsv" 
