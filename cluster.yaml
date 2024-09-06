@@ -145,7 +145,11 @@ bismark_methylation_extractor_pe:
     time: 0-20:00:00
     mem_mb: 8000
 
-wgbstools_convert_bam_to_beta:
+wgbstools_convert_bam_to_beta_bwa:
+    time: 0-20:00:00
+    mem_mb: 8000
+
+wgbstools_convert_bam_to_beta_bis:
     time: 0-20:00:00
     mem_mb: 8000
 
