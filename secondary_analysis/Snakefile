@@ -85,8 +85,17 @@ rule_all_input_list = [
     expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis report
     expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis per-base report
     expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mosdepth bis summary report
-
-
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.M-bias_R1.png", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mbias plot r1
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}.M-bias_R2.png", root = config["root"], rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples()), # mbias plot r2
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.M-bias.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # mbias report
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_splitting_report.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # splitting report
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.bismark.cov.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # methylone CpG coverage
+    expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.bedGraph.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples()), # methylome CpG mlevel bedGraph
+    expand("{root}/{data_dir}/06_bismark_methyl_extractor/CpG_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()), # read base methylation state CpG
+    expand("{root}/{data_dir}/06_bismark_methyl_extractor/CHG_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()), # read base methylation state CHG
+    expand("{root}/{data_dir}/06_bismark_methyl_extractor/CHH_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples()), # read base methylation state CHH
+    expand("{root}/{data_dir}/06_wgbstools_betas_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", root = config["root"], data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample = sample_info.itertuples()), # wgbstools beta output
+    expand("{root}/{data_dir}/06_wgbstools_betas_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", root = config["root"], data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample = sample_info.itertuples()) # wgbstools beta output
     ]
 
 if config["bismark"] == False:
@@ -107,6 +116,16 @@ if config["bismark"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis per-base report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bis summary report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.M-bias_R1.png", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark mbias plot
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{pe.ref}--{pe.patient_id}-{pe.group}-{pe.srx_id}-{pe.layout}.M-bias_R2.png", root = config["root"], rep_dir=config["reports_dir"], pe=sample_info_pe.itertuples())), # bismark mbias plot
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.M-bias.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark mbias report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_splitting_report.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark splitting report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.bismark.cov.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark coverage report
+    rule_all_input_list.remove(expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.bedGraph.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # bismark bedGraph report
+    rule_all_input_list.remove(expand("{root}/{data_dir}/06_bismark_methyl_extractor/CpG_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())), # bismark methylation report
+    rule_all_input_list.remove(expand("{root}/{data_dir}/06_bismark_methyl_extractor/CHG_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())), # bismark methylation report
+    rule_all_input_list.remove(expand("{root}/{data_dir}/06_bismark_methyl_extractor/CHH_context_{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}.txt.gz", root = config["root"], data_dir=config["data_dir"], sample = sample_info.itertuples())), # bismark methylation report
+    rule_all_input_list.remove(expand("{root}/{data_dir}/06_wgbstools_betas_bis/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", root = config["root"], data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample = sample_info.itertuples())), # wgbstools beta output
 
 if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{data_dir}/03_aligned_bwameth/{se.ref}--{se.patient_id}-{se.group}-{se.srx_id}-{se.layout}/{se.accession}_trimmed.bam", root = config["root"], data_dir=config["data_dir"], se=sample_info_se.itertuples())), # bwameth_mapping se output
@@ -127,7 +146,7 @@ if config["bwameth"] == False:
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa per-base report
     rule_all_input_list.remove(expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"], sample = sample_info.itertuples())), # mosdepth bwa summary report
-    
+    rule_all_input_list.remove(expand("{root}/{data_dir}/06_wgbstools_betas_bwa/{sample.ref}--{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", root = config["root"], data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample = sample_info.itertuples())), # wgbstools beta output
 
 # rule_all_input_list = [
 # expand("{data_dir}/06_wgbstools_betas/{sample.ref}-{sample.patient_id}-{sample.group}-{sample.srx_id}-{sample.layout}_merged.{suf}", data_dir=config["data_dir"], suf=["pat.gz", "pat.gz.csi", "beta"], sample=sample_info.itertuples()),
@@ -173,6 +192,8 @@ include: "rules/04_sambamba_sort_index_dedup.smk" # bwameth deduplication pathwa
 include: "rules/04_qc_reporting_post_dedup.smk"
 include: "rules/05_sambamba_merge.smk"
 include: "rules/05_qc_reporting_post_merge.smk"
+include: "rules/06_bismark_methylation_extractor.smk"
+include: "rules/06_wgbstools_bam_to_beta.smk"
 
 
 #### -- Intermediate files produced by prep-Snakefile that could be added to rule all -- ###
