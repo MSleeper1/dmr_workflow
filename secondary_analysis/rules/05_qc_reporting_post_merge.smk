@@ -133,52 +133,52 @@ rule feature_counts_bis:
 
 
 rule fastqc_post_merge_bwa:
-	input: 
-		expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
+    input:
+        expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
 
-	output:
-		expand("{root}/{rep_dir}/05_fastqc_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"])
+    output:
+        expand("{root}/{rep_dir}/05_fastqc_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"])
 
-	log:
-		"logs/secondary_rules/05_fastqc_post_merge_bwa/05_fastqc_post_merge-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
+    log:
+        "logs/secondary_rules/05_fastqc_post_merge_bwa/05_fastqc_post_merge-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
 
-	conda:
-		"../../environment_files/fastqc.yaml"
+    conda:
+        "../../environment_files/fastqc.yaml"
 
-	params:
-		output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
+    params:
+        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
 
-	shell: 
-		"""
-		mkdir -p {params.output_dir}
+    shell: 
+        """
+        mkdir -p {params.output_dir}
         echo "Running fastqc on {input}" > {log}
-		fastqc -o {params.output_dir} {input} >> {log} 2>&1
+        fastqc -o {params.output_dir} {input} >> {log} 2>&1
         echo "Done" >> {log}
-		"""
+        """
 
 rule fastqc_post_merge_bis:
-	input: 
-		expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
+    input:
+        expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
+    
+    output:
+        expand("{root}/{rep_dir}/05_fastqc_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"])
 
-	output:
-		expand("{root}/{rep_dir}/05_fastqc_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged_fastqc.{suf}", root = config["root"], rep_dir = config["reports_dir"], suf=["html","zip"])
+    log:
+        "logs/secondary_rules/05_fastqc_post_merge_bis/05_fastqc_post_merge-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
 
-	log:
-		"logs/secondary_rules/05_fastqc_post_merge_bis/05_fastqc_post_merge-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
+    conda:
+        "../../environment_files/fastqc.yaml"
 
-	conda:
-		"../../environment_files/fastqc.yaml"
+    params:
+        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
 
-	params:
-		output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
-
-	shell: 
-		"""
-		mkdir -p {params.output_dir}
+    shell: 
+        """
+        mkdir -p {params.output_dir}
         echo "Running fastqc on {input}" > {log}
-		fastqc -o {params.output_dir} {input} >> {log} 2>&1
+        fastqc -o {params.output_dir} {input} >> {log} 2>&1
         echo "Done" >> {log}
-		"""
+        """
 
 
 ### SAMTOOLS STATS ###
