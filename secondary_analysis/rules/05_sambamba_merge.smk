@@ -36,6 +36,9 @@ rule sambamba_merge_bwameth:
         srx_id = "|".join(sample_info["srx_id"].tolist()),
         accession = "|".join(sample_info["accession"].tolist())
 
+    params:
+        outdir = expand("{root}/{data_dir}/05_merged_sambamba_bwa", root = config["root"], data_dir=config["data_dir"])
+
     shell:
         """
         echo "Adding files to array..." > {log}
@@ -65,8 +68,7 @@ rule sambamba_merge_bismark:
         bams = lambda wildcards: expand("{root}/{data_dir}/04_bismark_deduped/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}/{accession}_bismark.deduplicated.bam", root = config["root"], data_dir=config["data_dir"], accession = sample_info[sample_info["srx_id"] == wildcards.srx_id]["accession"].tolist())
     
     output:
-        merged_bam = expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"]),
-        bai = expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"])
+        merged_bam = expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
 
     log:
         "logs/secondary_rules/05_sambamba_merge_bismark/05_sambamba_merge_bismark-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
@@ -83,16 +85,19 @@ rule sambamba_merge_bismark:
         srx_id = "|".join(sample_info["srx_id"].tolist()),
         accession = "|".join(sample_info["accession"].tolist())
 
+    params:
+        outdir = expand("{root}/{data_dir}/05_merged_sambamba_bis", root = config["root"], data_dir=config["data_dir"])
+
     shell:
         """
         echo "Adding files to array..." > {log}
         FILES=()
-        echo "Checking number of files in array..." >> {log}
         for i in {input.bams}; do
             FILES+=($i)
         done
-        echo "Number of files in array: ${{#FILES[@]}}" >> {log}
+        echo "Checking number of files in array..." >> {log}
         input_len=${{#FILES[@]}}
+        echo "Number of files in array: $input_len" >> {log}
         echo "Merge files if more than one file is present..." >> {log}
         if [ $input_len -gt 1 ]; then
             echo "Merging files: {input.bams} into {output.merged_bam} with sambamba merge..." >> {log}
@@ -101,7 +106,6 @@ rule sambamba_merge_bismark:
         else
             echo "Only one file, no need to merge. Creating symlink for file at expected output location: {output.merged_bam}" >> {log}
             cp -f {input.bams} {output.merged_bam}
-            cp -f {input.bams}.bai {output.bai}
         fi
         echo "Done" >> {log}
         sleep 10
