@@ -239,7 +239,7 @@ rule mosdepth_bwa:
         summary = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"]) # this named output is required for prefix parsing
     
     log:
-        "logs/secondary_rules/05_mosdepth_bwa/05_mosdepth_bis-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
+        "logs/secondary_rules/05_mosdepth_bwa/05_mosdepth_bwa-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
     
     params:
         extra="--fast-mode -Q 10",  # optional
