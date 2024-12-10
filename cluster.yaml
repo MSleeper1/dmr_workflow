@@ -1,0 +1,150 @@
+# cluster.yaml - cluster configuration
+# This file is used by snakemake to submit jobs to the cluster
+
+# submit jobs to the cluster using the following command:
+#       snakemake -s prep-Snakefile --cluster-config ../cluster.yaml 
+#       --cluster "sbatch --parsable --time={cluster.time} 
+#       --mem={cluster.mem_mb} --nodes={cluster.nodes} 
+#       --cpus-per-task={cluster.cpus-per-task} --output={cluster.output} 
+#       --error={cluster.error} --job-name={cluster.name}"
+#       --use-conda --keep-going --rerun-incomplete --printshellcmds
+#       --latency-wait {cluster.latency-wait} --jobs {cluster.jobs}
+#       --max-jobs-per-second {cluster.max-jobs-per-second} --scheduler {cluster.scheduler}
+#       --max-status-checks-per-second {cluster.max-status-checks-per-second}
+#       --restart-times {cluster.restart-times} --local-cores {cluster.local-cores}
+#       --cleanup-shadow
+
+### default cluster configuration ###
+__default__:
+    partition: med2                                             # partition to submit jobs to (-p, --partition=PARTITION)
+    time: 0-01:00:00                                            # time limit for each job in D-HH:MM:SS (-t, --time=TIME)
+    mem_mb: 1000                                                # memory limit for each job in MB (--mem=MB)
+    nodes: 1                                                    # number of nodes (-N 1, --nodes=1)
+    cpus-per-task: 4                                            # think of this as threads: number of cpus per task (-c 4, --cpus-per-task=4)
+    ntasks-per-node: 14                                         # request n cores be allocated per node. (-n 14, --ntasks-per-node=14)
+    output: logs/sbatch-logs/{rule}/{rule}-{wildcards}-%j.out   # file for standard out (-o, --output=FILE)
+    error: logs/sbatch-logs/{rule}/{rule}-{wildcards}-%j.err    # file for standard error (-e, --error=FILE)
+    name: smk-{rule}.{wildcards}                                # name for job (-J, --job-name=NAME)
+
+
+restart-times: 3                                                # number of times to restart a failed job     
+max-jobs-per-second: 10                                         # max number of jobs to submit per second    
+max-status-checks-per-second: 1                                 # max number of status checks per second  
+local-cores: 1                                                  # number of cores to use on local machine   
+latency-wait: 100                                               # number of seconds to wait for cluster to respond
+jobs: 50                                                        # number of jobs to run simultaneously  
+keep-going: True                                                # continue running jobs if a job fails      
+rerun-incomplete: True                                          # rerun jobs if they are incomplete     
+printshellcmds: True                                            # print shell commands in job scripts     
+scheduler: greedy                                               # scheduler to use (greedy or sequential)
+use-conda: True                                                 # use conda to manage software dependencies
+
+ ### rule specific settings ###
+bwameth_index_ref_genome:                                       # rule name 
+    time: 05:00:00                                              # time limit for each job (D-HH:MM)
+    mem_mb: 15000                                               # memory limit for each job (in MB)      
+
+bismark_index_ref_genome:                                   
+    time: 05:00:00
+    mem_mb: 15000
+
+wgbstools_init_ref_genome:
+    time: 0:30:00
+    mem_mb: 5000   
+
+sra_get_data_se:
+    time: 03:00:00
+    mem_mb: 15000     
+   
+fastq_screen_se:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpu-per-task: 8
+
+fastq_screen_pe:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpu-per-task: 8
+
+trim_galore_se:
+    time: 03:00:00
+    mem_mb: 15000
+
+bismark_mapping_se:
+    time: 0-20:00:00
+    mem_mb: 20000
+
+bismark_mapping_pe:
+    time: 0-20:00:00
+    mem_mb: 20000
+
+bwameth_mapping_se:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpus-per-task: 4
+
+bwameth_mapping_pe:
+    time: 0-20:00:00
+    mem_mb: 20000
+    cpus-per-task: 4
+
+sambamba_sort_index_markdups:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+deduplicate_bismark:
+    time: 0-10:00:00
+    mem_mb: 8000
+
+sambamba_merge_bwameth:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+sambamba_merge_bismark:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+mosdepth_bwa:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+mosdepth_bis:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+feature_counts_bwa:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+feature_counts_bis:
+    time: 0-10:00:00
+    mem_mb: 8000
+    cpus-per-task: 4
+
+qualimap_post_merge_bwa:
+    mem_mb: 4000
+
+qualimap_post_merge_bis:
+    mem_mb: 4000
+
+bismark_methylation_extractor_se:
+    time: 0-20:00:00
+    mem_mb: 8000
+
+bismark_methylation_extractor_pe:
+    time: 0-20:00:00
+    mem_mb: 8000
+
+wgbstools_convert_bam_to_beta:
+    time: 0-20:00:00
+    mem_mb: 8000
+
+
+
+                                                               
