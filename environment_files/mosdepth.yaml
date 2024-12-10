@@ -1,6 +1,6 @@
-name: multiqc
+name: mosdepth
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
 dependencies:
-  - multiqc
+  - mosdepth
