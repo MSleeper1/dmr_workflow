@@ -102,7 +102,7 @@ rule sambamba_merge_bismark:
         if [ $input_len -gt 1 ]; then
             echo "Merging files: {input.bams} into {output.merged_bam} with sambamba merge..." >> {log}
             sambamba merge -t {threads} {output.merged_bam} {input.bams} >> {log} 2>> {log}
-            sambamba index -t {threads} {output.merged_bam} {output.bai} >> {log} 2>> {log}
+            sambamba index -t {threads} {output.merged_bam} {output.merged_bam}.bai >> {log} 2>> {log}
         else
             echo "Only one file, no need to merge. Creating symlink for file at expected output location: {output.merged_bam}" >> {log}
             cp -f {input.bams} {output.merged_bam}
