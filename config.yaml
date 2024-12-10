@@ -1,31 +1,32 @@
-### data accession and metadata info tsv (can be freely changed) ###
-samples_tsv: "/home/msleeper/workflows/dmr_workflow/supplementary/data/318_test_data.tsv" 
+### configuration file for DMR workflow ###
+root: "/home/msleeper" # path to root directory
 
-base_dir: "/home/msleeper/workflows/dmr_workflow" # path to workflow directory
+### conditional configuration ###
+# Alignment options (set to true if you want to run the alignment pathway)
+# must set at least one of these to true to run the pipeline
+bismark: True # set to true if you want the bismark processing pathway to run
+bwameth: True # set to true if you want the bwameth processing pathway to run
+
+### All directories will have the root path prepended to them later ###
+# Do not include the root path in the config directories or files below
+
+### data accession and metadata info tsv (can be freely changed) ###
+samples_tsv: "workflows/DMReproducible/supplementary/402_test_data.tsv" 
 
 ### directories for outputs (can be freely changed) ###
-genomes_dir: "/home/msleeper/scratch/genomes" # path to genome output directory
-data_dir: "/home/msleeper/scratch/data" # path to data output directory 
-reports_dir: "/home/msleeper/scratch/reports" # path to reports output directory
+genomes_dir: "scratch/genomes" # path to genome output directory
+data_dir: "scratch/data" # path to data output directory 
+reports_dir: "scratch/reports" # path to reports output directory
 
-### paths to subworkflow (should not be changed) ###
-subworkflow:
-  dir: "/home/msleeper/workflows/dmr_workflow/pre-processing" # path to pre-processing pipeline 
-  snakefile: "pre-processing/prep-Snakefile.smk" # path to pre-processing snakefile
-
-### reference genome information (can be changed with special consideration noted in comments) ###
+# ### reference genome information (can be changed with special consideration noted in comments) ###
 ref:
   genome: "hg38" # genome build name (can be freely changed)
-  dir: "/home/msleeper/scratch/genomes/hg38/analysisSet" # ref fasta will be downloaded here (the path should be within genomes_dir)
   fasta: "hg38.analysisSet" # prefix for genome fasta file name (this must match file name from goldenPath without the extentions)
   goldenPath: "//hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.fa.gz" # UCSC genome browser path to reference genome fasta file (can be freely changed)
   
   ### reference index directories ###
-  bismark_idx_dir: "/home/msleeper/scratch/genomes/hg38/analysisSet/bismark/Bisulfite_Genome" # Bismark output directory (only change beginning to match ref.dir path - must end in "/Bisulfite_Genome")
-  bwa_idx_dir: "/home/msleeper/scratch/genomes/hg38/analysisSet/bwameth" # bwameth index dir (only change beginning to match ref.dir path)
-  wgbstools_idx_dir: "/home/msleeper/programs/wgbs_tools/references" # (only change beginning to match location of wgbs_tools program directory (wgbstools must be set up separately before running the pipeline - should end in "/wgbs_tools/references")
-  wgbstools_ref_name: "hg38_analysisSet" # wgbs_tools ref index name (can be freely changed to anything)
-  
+  wgbstools_idx_dir: "programs/wgbs_tools/references" # root dir will be appened onto this (only change beginning to match location of wgbs_tools program directory (wgbstools must be set up separately before running the pipeline - should end in "/wgbs_tools/references")
+
   ### annotation file info ###
   gtf: "hg38.knownGene" # prefix for gtf file name (must match file name from gtf_goldenPath without the extentions)
   gtf_goldenPath: "//hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" # UCSC genome browser path to gtf file (can be freely changed but file should end in gtf.gz)
@@ -37,3 +38,7 @@ prep_args:
   bismark_genome_prep: "--verbose --bowtie2" # bismark arguments
   trim_galore_se: "--phred33" # trim_galore arguments (do not add --fastqc or -o as they are specified within the rule)
   # trim galore removed all reads for 318 files due to being trimmed below 20 bp length when using -q 67
+
+# mosdepth:
+#     threads : 4
+#     mapping_quality : 10

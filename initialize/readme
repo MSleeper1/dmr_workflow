@@ -1,0 +1,10 @@
+# Initialize the DMReproduciple pipeline
+
+This directory contains the workflow to set up the DMReprodicible pipeline.
+
+This involves:
+
+- Downloading the reference genome (specified in the config file)
+- Indexing the reference genome for use with the programs bwa-meth, bismark, fastq-screen, and wgbstools
+- Downloading the desired fastq files from SRA (specified by the user in the samples.tsv file)
+

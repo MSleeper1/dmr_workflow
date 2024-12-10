@@ -18,7 +18,7 @@
 __default__:
     partition: med2                                             # partition to submit jobs to (-p, --partition=PARTITION)
     time: 0-01:00:00                                            # time limit for each job in D-HH:MM:SS (-t, --time=TIME)
-    mem_mb: 1000                                                # memory limit for each job in MB (--mem=MB)
+    mem_mb: 2000                                                # memory limit for each job in MB (--mem=MB)
     nodes: 1                                                    # number of nodes (-N 1, --nodes=1)
     cpus-per-task: 4                                            # think of this as threads: number of cpus per task (-c 4, --cpus-per-task=4)
     ntasks-per-node: 14                                         # request n cores be allocated per node. (-n 14, --ntasks-per-node=14)
@@ -40,21 +40,25 @@ scheduler: greedy                                               # scheduler to u
 use-conda: True                                                 # use conda to manage software dependencies
 
  ### rule specific settings ###
-bwameth_index_ref_genome:                                       # rule name 
+ref_index_bwameth:                                       # rule name 
     time: 05:00:00                                              # time limit for each job (D-HH:MM)
     mem_mb: 15000                                               # memory limit for each job (in MB)      
 
-bismark_index_ref_genome:                                   
+ref_index_bismark:                                   
     time: 05:00:00
     mem_mb: 15000
 
-wgbstools_init_ref_genome:
+ref_init_wgbstools:
     time: 0:30:00
     mem_mb: 5000   
 
-sra_get_data_se:
+get_samples_se:
     time: 03:00:00
     mem_mb: 15000     
+
+get_samples_pe:
+    time: 03:00:00
+    mem_mb: 15000  
    
 fastq_screen_se:
     time: 0-20:00:00

@@ -11,8 +11,9 @@ supplementary/betas/.
 src/scratch/.
 
 # scratch files from rule development
-/pipeline/rules/scratch/
-/pipeline/pre-processing/scratch/
+/rules/scratch/
+/pre-processing/scratch/
+/troubleshooting_scratch/
 
 # temporary files
 *.tmp
@@ -26,10 +27,8 @@ temp/*
 .DS_Store?
 
 # Snakemake logs and outputs
-/pipeline/.snakemake/
-/pipeline/pre-processing/logs/
-/pipeline/logs/
-/pipeline/pre-processing/.snakemake/
+.snakemake/
+logs/
 
 # python cache files
 __pycache__/
