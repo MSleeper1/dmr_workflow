@@ -3,17 +3,17 @@ rule bismark_methylation_extractor_se:
         expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
     
     output:
-        mbias_r1 = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R1.png", root = config["root"], rep_dir=config["reports_dir"]),
+        mbias_r1 = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R1.png", root = config["root"], data_dir=config["data_dir"]),
         # Only for PE BAMS:
         # mbias_r2="qc/meth/{sample}.M-bias_R2.png",
 
-        mbias_report = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias.txt", root = config["root"], rep_dir=config["reports_dir"]),
-        splitting_report = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_splitting_report.txt", root = config["root"], rep_dir=config["reports_dir"]),
+        mbias_report = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias.txt", root = config["root"], data_dir=config["data_dir"]),
+        splitting_report = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_splitting_report.txt", root = config["root"], data_dir=config["data_dir"]),
 
         # 1-based start, 1-based end ('inclusive') methylation info: % and counts
-        methylone_CpG_cov = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bismark.cov.gz", root = config["root"], rep_dir=config["reports_dir"]),
+        methylone_CpG_cov = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bismark.cov.gz", root = config["root"], data_dir=config["data_dir"]),
         # BedGraph with methylation percentage: 0-based start, end exclusive
-        methylome_CpG_mlevel_bedGraph = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bedGraph.gz", root = config["root"], rep_dir=config["reports_dir"]),
+        methylome_CpG_mlevel_bedGraph = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bedGraph.gz", root = config["root"], data_dir=config["data_dir"]),
 
         # Primary output files: methylation status at each read cytosine position: (extremely large)
         read_base_meth_state_cpg = expand("{root}/{data_dir}/06_bismark_methyl_extractor/CpG_context_{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.txt.gz", root = config["root"], data_dir=config["data_dir"]),
@@ -34,7 +34,7 @@ rule bismark_methylation_extractor_se:
         layout="se"
     
     params:
-        output_dir="meth",  # optional output dir
+        output_dir = expand("{root}/{data_dir}/06_bismark_methyl_extractor", root = config["root"], data_dir=config["data_dir"]),  # optional output dir
         extra="--gzip --comprehensive --bedGraph"  # optional params string
     
     wrapper:
@@ -46,17 +46,17 @@ rule bismark_methylation_extractor_pe:
         expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"])
     
     output:
-        mbias_r1 = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R1.png", root = config["root"], rep_dir=config["reports_dir"]),
+        mbias_r1 = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R1.png", root = config["root"], data_dir=config["data_dir"]),
         # Only for PE BAMS:
-        mbias_r2 = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R2.png", root = config["root"], rep_dir=config["reports_dir"]),
+        mbias_r2 = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias_R2.png", root = config["root"], data_dir=config["data_dir"]),
 
-        mbias_report = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias.txt", root = config["root"], rep_dir=config["reports_dir"]),
-        splitting_report = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_splitting_report.txt", root = config["root"], rep_dir=config["reports_dir"]),
+        mbias_report = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.M-bias.txt", root = config["root"], data_dir=config["data_dir"]),
+        splitting_report = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_splitting_report.txt", root = config["root"], data_dir=config["data_dir"]),
 
         # 1-based start, 1-based end ('inclusive') methylation info: % and counts
-        methylone_CpG_cov = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bismark.cov.gz", root = config["root"], rep_dir=config["reports_dir"]),
+        methylone_CpG_cov = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bismark.cov.gz", root = config["root"], data_dir=config["data_dir"]),
         # BedGraph with methylation percentage: 0-based start, end exclusive
-        methylome_CpG_mlevel_bedGraph = expand("{root}/{rep_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bedGraph.gz", root = config["root"], rep_dir=config["reports_dir"]),
+        methylome_CpG_mlevel_bedGraph = expand("{root}/{data_dir}/06_bismark_methyl_extractor/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.bedGraph.gz", root = config["root"], data_dir=config["data_dir"]),
 
         # Primary output files: methylation status at each read cytosine position: (extremely large)
         read_base_meth_state_cpg = expand("{root}/{data_dir}/06_bismark_methyl_extractor/CpG_context_{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}.txt.gz", root = config["root"], data_dir=config["data_dir"]),
@@ -77,8 +77,8 @@ rule bismark_methylation_extractor_pe:
         layout="pe"
     
     params:
-        output_dir="meth",  # optional output dir
-        extra="--gzip --comprehensive --bedGraph"  # optional params string
+        output_dir = expand("{root}/{data_dir}/06_bismark_methyl_extractor", root = config["root"], data_dir=config["data_dir"]),  # optional output dir
+        extra = "--gzip --comprehensive --bedGraph"  # optional params string
     
     wrapper:
         "v3.4.1/bio/bismark/bismark_methylation_extractor"
