@@ -41,7 +41,7 @@ rule qualimap_post_merge_bwa:
 
 rule qualimap_post_merge_bis:
     input:
-        expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"]),
+        expand("{root}/{data_dir}/05_bismark_sorted_by_coordinate/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_bismark.deduplicated_sorted_merged.bam", root = config["root"], data_dir=config["data_dir"]),
         gtf = expand("{root}/{genomes_dir}/{genome}/{gtf}.gtf", root = config["root"], genomes_dir = config["genomes_dir"], genome = config["ref"]["genome"], gtf = config["ref"]["gtf"])
     
     output:
@@ -54,10 +54,11 @@ rule qualimap_post_merge_bis:
         "../../environment_files/qualimap.yaml"
 
     params:
-        temp_out = "bis_{ref}--{patient_id}-{group}-{srx_id}-{layout}_merged"
+        temp_out = expand("{root}/{rep_dir}/05_qualimap_bis/temp/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged", root = config["root"], rep_dir=config["reports_dir"])
 
     shell:
         """
+        mkdir -p {params.temp_out}
         echo "Running qualimap on {input}" > {log}
         qualimap bamqc -bam {input} -c -sd -os -gd hg38 -gff {input.gtf} --outdir {params.temp_out} >> {log} 2>&1
         echo "Moving qualimap output to reports directory" >> {log}
@@ -146,7 +147,7 @@ rule fastqc_post_merge_bwa:
         "../../environment_files/fastqc.yaml"
 
     params:
-        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
+        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge_bwa", root = config["root"], rep_dir = config["reports_dir"])
 
     shell: 
         """
@@ -170,7 +171,7 @@ rule fastqc_post_merge_bis:
         "../../environment_files/fastqc.yaml"
 
     params:
-        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge", root = config["root"], rep_dir = config["reports_dir"])
+        output_dir = expand("{root}/{rep_dir}/05_fastqc_post_merge_bis", root = config["root"], rep_dir = config["reports_dir"])
 
     shell: 
         """
@@ -228,49 +229,63 @@ rule samtools_stats_post_merge_bis:
 # input: trimmed, aligned, and deduplicated sequence files (bam)
 # output: mosdepth report for deduplicated sequence files (global distribution text file, per-base bed file, and summary text file)
 
-rule mosdepth_bwa:
-    input:
-        bam = expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"]),
-        bai = expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"])
+### rewrite this rule
+# rule mosdepth_bwa:
+#     input:
+#         bam = expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"]),
+#         bai = expand("{root}/{data_dir}/05_merged_sambamba_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"])
     
-    output:
-        expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"]),
-        expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"]), # produced unless --no-per-base specified
-        summary = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"]) # this named output is required for prefix parsing
+#     output:
+#         expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"]),
+#         expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"]), # produced unless --no-per-base specified
+#         summary = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bwa/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"]) # this named output is required for prefix parsing
     
-    log:
-        "logs/secondary_rules/05_mosdepth_bwa/05_mosdepth_bwa-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
+#     log:
+#         "logs/secondary_rules/05_mosdepth_bwa/05_mosdepth_bwa-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
     
-    params:
-        extra="--fast-mode -Q 10",  # optional
-    # additional decompression threads through `--threads`
+#     params:
+#         extra="--fast-mode -Q 10",  # optional
+#     # additional decompression threads through `--threads`
     
-    threads: 4  # This value - 1 will be sent to `--threads`
+#     threads: 4  # This value - 1 will be sent to `--threads`
     
-    wrapper:
-        "v3.4.1/bio/mosdepth"
+#     wrapper:
+#         "v3.4.1/bio/mosdepth"
 
 rule mosdepth_bis:
     input:
-        bam = expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam", root = config["root"], data_dir=config["data_dir"]),
-        bai = expand("{root}/{data_dir}/05_merged_sambamba_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.bam.bai", root = config["root"], data_dir=config["data_dir"])
-    
+        bam = expand("{root}/{data_dir}/05_bismark_sorted_by_coordinate/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_bismark.deduplicated_sorted_merged.bam", root = config["root"], data_dir=config["data_dir"]),
+        bai = expand("{root}/{data_dir}/05_bismark_sorted_by_coordinate/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_bismark.deduplicated_sorted_merged.bam.bai", root = config["root"], data_dir=config["data_dir"])
     output:
         expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.global.dist.txt", root = config["root"], rep_dir=config["reports_dir"]),
         expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.per-base.bed.gz", root = config["root"], rep_dir=config["reports_dir"]), # produced unless --no-per-base specified
-        summary = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"]) # this named output is required for prefix parsing
-    
+                expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.per-base.bed.gz.csi", root = config["root"], rep_dir=config["reports_dir"]), # produced unless --no-per-base specified
+        expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged.mosdepth.summary.txt", root = config["root"], rep_dir=config["reports_dir"]) # this named output is required for prefix parsing
+
     log:
         "logs/secondary_rules/05_mosdepth_bis/05_mosdepth_bis-{ref}--{patient_id}-{group}-{srx_id}-{layout}.log"
     
+    threads: 3
+
+    conda:
+        "../../environment_files/mosdepth.yaml"
+
     params:
-        extra="--fast-mode -Q 10",  # optional
-    # additional decompression threads through `--threads`
+        extra="--fast-mode",  # optional
+        mapping_quality = 10,
+        out_prefix = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis/{{ref}}--{{patient_id}}-{{group}}-{{srx_id}}-{{layout}}_merged", root = config["root"], rep_dir=config["reports_dir"]),
+        outdir = expand("{root}/{rep_dir}/05_mosdepth_post_merge_bis", root = config["root"], rep_dir=config["reports_dir"])
     
-    threads: 4  # This value - 1 will be sent to `--threads`
-    
-    wrapper:
-        "v3.4.1/bio/mosdepth"
+    shell:
+        '''
+        mkdir -p {params.outdir}
+        mosdepth \
+        -x \
+        -t {threads} \
+        -Q {params.mapping_quality} \
+        {params.out_prefix} \
+        {input.bam}
+        '''
 
 # # Get the depth for each sample
 # rule mosdepth:
