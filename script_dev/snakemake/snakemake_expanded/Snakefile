@@ -1,0 +1,187 @@
+
+import os
+
+# expanded trial of snakemake testing steps from sra_download to to beta_to_table
+# 
+
+# # add wgbs_tools to path, can add to bashrc file to avoid calling everytime
+# #shell("export PATH=${PATH}:/home/msleeper/programs/wgbs_tools")
+# os.system("cd /home/msleeper/programs/wgbs_tools")
+# os.system("export PATH=${PATH}:$PWD") 
+
+# # configure hg19 as reference genome (add -f to overwrite existing reference)
+# #shell("wgbstools init_genome hg19")
+os.system("wgbstools init_genome hg19")
+
+region="chr3:119527929-119531943"
+
+samples=["SRR20314953"]
+project="SRP387135"
+out_dir="~/data/{project}/"
+
+rule all:
+    input:
+        expand("{out_dir}{sample}_1.fastq", sample=sample, out_dir=out_dir),), 
+        "{out_dir}{sample}_2.fastq"
+
+#rule to download paired end fastq file from SRA using SRA toolkit
+rule sra_download:
+    ''' download fastq file from SRA'''
+    conda:
+        "sra-download.yml"
+    input:
+        "{sample}"
+    output:
+        "{out_dir}{sample}_1.fastq"
+        "{out_dir}{sample}_2.fastq"
+    shell: """
+        if [ ! -d "{out_dir}" ]; then
+            mkdir {out_dir}
+        prefetch {input}
+        fasterq-dump --split-3 --outdir {out_dir} {input} 
+    """
+
+
+# #rule to trim fastq file using trimmomatic
+# rule trimmomatic:
+#     ''' trim fastq file using trimmomatic'''
+#     conda:
+#         "trimmomatic.yml"
+#     input:
+#         "{sample}.fastq"
+#     output:
+#         "{sample}.trim.fastq"
+#     shell: """
+#         trimmomatic SE -threads 4 -phred33 {input} {output} ILLUMINACLIP:TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+#     """
+
+# # #rule to align fastq file using bismark
+# # rule bismark:
+# #     ''' align fastq file using bismark'''
+# #     conda:
+# #         "bismark.yml"
+# #     input:
+# #         "{sample}.trim.fastq"
+# #     output:
+# #         "{sample}.bam"
+# #     shell: """
+# #         bismark --bowtie2 --multicore 4 --genome hg19 {input}
+# #     """
+
+# #rule to align fastq file using bwameth
+# rule bwameth:
+#     ''' align fastq file using bwameth'''
+#     conda:
+#         "bwameth.yml"
+#     input:
+#         "{sample}.trim.fastq"
+#     output:
+#         "{sample}.bam"
+#     shell: """
+#         bwameth.py --threads 4 --reference hg19 {input}
+#     """
+
+# #rule to sort bam file using samtools
+# rule sort_bam:
+#     ''' sort bam file using samtools'''
+#     conda:
+#         "samtools.yml"
+#     input:
+#         "{sample}.bam"
+#     output:
+#         "{sample}.sorted.bam"
+#     shell: """
+#         samtools sort -@ 4 -o {output} {input}
+#     """
+
+# rule convert_bam:
+#     ''' convert bams into pat and beta files'''
+#     conda:
+#         "dmr.yml"
+#     input:
+#         "Lung_STL002.small.bam"
+#     output:
+#         "Lung_STL002.small.pat.gz", 
+#         "Lung_STL002.small.pat.gz.csi", 
+#         "Lung_STL002.small.beta"
+#     shell: """
+#         wgbstools convert -r {region}
+#         wgbstools bam2pat {input} -r {region} -f
+#     """
+#     benchmark:
+        
+
+# rule segment:
+#     conda:
+#         "dmr.yml"
+#     input:
+#         "Lung_STL002.small.beta"
+#     output:
+#         "blocks.small.bed"
+#     shell: """
+#         wgbstools segment --betas {input} --min_cpg 3 --max_bp 2000 -r {region} -o {output}
+#     """   
+        
+# rule index:
+#     conda:
+#         "dmr.yml"
+#     input:
+#         "blocks.small.bed"
+#     output:
+#         "blocks.small.bed.gz",
+#         "blocks.small.bed.gz.tbi"
+#     shell: """
+#         wgbstools index {input}
+#     """
+
+# rule create_table:
+#     conda:
+#         "dmr.yml"
+#     input:
+#         blocks="blocks.small.bed.gz",
+#         beta="Lung_STL002.small.beta"
+#     output:
+#         "Lung_STL002-meth-segments.csv"
+#     shell: """
+#     wgbstools beta_to_table {input.blocks} --betas {input.beta} | column -t >> {output}
+#     """
+
+
+
+
+# #rule to index bam file using samtools
+# rule index_bam:
+#     ''' index bam file using samtools'''
+#     conda:
+#         "samtools.yml"
+#     input:
+#         "{sample}.sorted.bam"
+#     output:
+#         "{sample}.sorted.bam.bai"
+#     shell: """
+#         samtools index {input}
+#     """
+
+# rule to align fastq file using bismark
+# rule bismark:
+#     ''' align fastq file using bismark'''
+#     conda:
+#         "bismark.yml"
+#     input:
+#         "{sample}.trim.fastq"
+#     output:
+#         "{sample}.bam"
+#     shell: """
+#         bismark --bowtie2 --multicore 4 --genome hg19 {input}
+#     """
+
+# create a squareroot function
+def sqrt(x):
+    return x ** 0.5
+
+# create a recursive function to calculate fibonacci numbers
+def fib(n):
+    if n <= 1:
+        return n
+    else:
+        return(fib(n-1) + fib(n-2))

@@ -1,0 +1,75 @@
+
+import os
+
+# small trial of snakemake testing steps from wgbstool from bam2pat to beta_to_table
+# ran with success 6/26
+
+# # add wgbs_tools to path, can add to bashrc file to avoid calling everytime
+# #shell("export PATH=${PATH}:/home/msleeper/programs/wgbs_tools")
+# os.system("cd /home/msleeper/programs/wgbs_tools")
+# os.system("export PATH=${PATH}:$PWD") 
+
+# # configure hg38 as reference genome (add -f to overwrite existing reference)
+# only need to run init_genome once
+# os.system("wgbstools init_genome hg38")
+os.system("wgbstools set_default_ref hg38")
+
+rule all:
+    input:
+        "Lung_STL002-meth-segments.csv"
+
+rule convert_bam:
+    ''' convert bams into pat and beta files'''
+    conda:
+        "dmr.yml"
+    input:
+        "Lung_STL002.small.bam"
+    output:
+        "Lung_STL002.small.pat.gz", 
+        "Lung_STL002.small.pat.gz.csi", 
+        "Lung_STL002.small.beta"
+    # log:
+    #     "logs/convert_bam/{sample}.log"
+    # benchmark:
+    #     "benchmarks/{sample}.bam2pat.benchmark.txt"
+    shell: """
+        wgbstools convert -r {region}
+        wgbstools bam2pat {input} -r {region} -f
+    """
+
+rule segment:
+    conda:
+        "dmr.yml"
+    input:
+        "Lung_STL002.small.beta"
+    output:
+        "blocks.small.bed"
+    shell: """
+        wgbstools segment --betas {input} --min_cpg 3 --max_bp 2000 -r {region} -o {output}
+    """   
+        
+rule index:
+    conda:
+        "dmr.yml"
+    input:
+        "blocks.small.bed"
+    output:
+        "blocks.small.bed.gz",
+        "blocks.small.bed.gz.tbi"
+    shell: """
+        wgbstools index {input}
+    """
+
+rule create_table:
+    conda:
+        "dmr.yml"
+    input:
+        blocks="blocks.small.bed.gz",
+        beta="Lung_STL002.small.beta"
+    output:
+        "Lung_STL002-meth-segments.csv"
+    shell: """
+    wgbstools beta_to_table {input.blocks} --betas {input.beta} | column -t >> {output}
+    """
+
+
