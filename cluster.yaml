@@ -153,6 +153,11 @@ wgbstools_convert_bam_to_beta_bis:
     time: 0-20:00:00
     mem_mb: 8000
 
+bismark_sort_by_coordinate:
+    time: 0-20:00:00
+    mem_mb: 8000
+    cpu-per-task: 4
+
 
 
                                                                
